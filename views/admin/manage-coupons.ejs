@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/head") %>
+
+    <body style="color: black;">
+        <%- include("partials/navbar") %>
+
+            <div class="container my-4">
+                <h1 class="text-center mb-4">Admin Panel - Manage Coupons</h1>
+
+                <% if (error) { %>
+                    <p class="bg-danger text-white alert">
+                        <%= error %>
+                    </p>
+                    <% } %>
+
+                        <% if (message) { %>
+                            <p class="bg-success text-white alert">
+                                <%= message %>
+                            </p>
+                            <% } %>
+
+                                <!-- Search Coupons -->
+                                <form action="/admin/manage-coupons/search" method="POST" class="mb-4">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control"
+                                            placeholder="Search coupon code..." required>
+                                        <button type="submit" class="btn btn-primary">Search</button>
+                                    </div>
+                                </form>
+
+                                <!-- Add Coupon -->
+                                <form action="/admin/manage-coupons" method="POST" class="mb-5">
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4">
+                                            <label for="codeInput" class="form-label">Coupon Code</label>
+                                            <div class="input-group">
+                                                <input type="text" name="code" id="codeInput"
+                                                    class="form-control border-primary" placeholder="Coupon Code">
+                                                <button type="button" class="btn bg-secondary border-primary text-light"
+                                                    onclick="generateCode()">Generate</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">Discount Amount</label>
+                                            <input type="number" name="discountAmount"
+                                                class="form-control border-primary" placeholder="Discount Amount"
+                                                required>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label">Expiry Date</label>
+                                            <input type="date" name="expiryDate" class="form-control border-primary"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-success mt-3">Add Coupon</button>
+                                </form>
+
+                                <!-- Coupons Table -->
+                                <table class="table table-bordered text-center">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Discount Amount</th>
+                                            <th>Expiry Date</th>
+                                            <th>Used By</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (coupons.length===0) { %>
+                                            <tr>
+                                                <td colspan="6">No coupons found</td>
+                                            </tr>
+                                            <% } else { %>
+                                                <% coupons.forEach(coupon=> { %>
+                                                    <tr>
+                                                        <td>
+                                                            <%= coupon.code %>
+                                                        </td>
+                                                        <td>
+                                                            <%= coupon.discountAmount %>
+                                                        </td>
+                                                        <td>
+                                                            <%= coupon.expiryDate ?
+                                                                coupon.expiryDate.toISOString().slice(0, 10) : 'N/A' %>
+                                                        </td>
+                                                        <td><span class="badge bg-dark">
+                                                                <%= coupon.usedBy.length %>
+                                                            </span></td>
+                                                        <td>
+                                                            <% if (coupon.isActive) { %>
+                                                                <span class="badge bg-success">Active</span>
+                                                                <% } else { %>
+                                                                    <span class="badge bg-secondary">Inactive</span>
+                                                                    <% } %>
+                                                        </td>
+                                                        <td>
+                                                            <form action="/admin/coupons/toggle/<%= coupon._id %>"
+                                                                method="POST" style="display:inline-block;">
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-warning">Toggle</button>
+                                                            </form>
+                                                            <form action="/admin/coupons/delete/<%= coupon._id %>"
+                                                                method="GET" style="display:inline-block;"
+                                                                onsubmit="return confirm('Delete this coupon?');">
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-danger">Delete</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    <% }) %>
+                                                        <% } %>
+                                    </tbody>
+                                </table>
+            </div>
+
+            <%- include("partials/scripts") %>
+
+                <script>
+                    function generateCode() {
+                        const prefixOptions = ["SAVE", "DEAL", "WELCOME", "OFFER", "TRUCK","PURCHASE"];
+                        const discount = Math.floor(Math.random()*100000) + 10; 
+                       
+
+                        const prefix = prefixOptions[Math.floor(Math.random() * prefixOptions.length)];
+                        const code = `${prefix}-${discount}`;
+
+                        document.getElementById("codeInput").value = code;
+                    }
+                </script>
+
+    </body>
+
+</html>

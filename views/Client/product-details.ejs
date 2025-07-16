@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        <%= product.name %> | Truck Haulers
+    </title>
+
+    <%- include("partials/head") %>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+        <style>
+            .img-magnifier-container {
+                position: relative;
+            }
+
+            .img-magnifier-glass {
+                position: absolute;
+                border: 3px solid #000;
+                border-radius: 50%;
+                cursor: none;
+                width: 120px;
+                height: 120px;
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+                display: none;
+                z-index: 10;
+            }
+
+            .highlighted-section {
+                background-color: #f9f9f9;
+                border-left: 4px solid #007bff;
+                padding: 2rem;
+                border-radius: 8px;
+            }
+
+            .review-stars i {
+                font-size: 1.2rem;
+            }
+
+            .review-card {
+                background: #ffffff;
+                border-left: 3px solid #198754;
+                border-radius: 6px;
+            }
+
+            .review-card .card-body {
+                padding: 1rem 1.25rem;
+            }
+
+            .btn-review {
+                width: 100%;
+            }
+
+            .product-title {
+                font-size: 1.75rem;
+                font-weight: 600;
+            }
+
+            .form-label {
+                font-weight: 500;
+            }
+        </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    <%- include("partials/navbar") %>
+
+        <main class="flex-grow-1">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <!-- Image Section -->
+                    <div class="col-md-6">
+                        <div class="mb-3 img-magnifier-container">
+                            <img id="mainImage" src="<%= product.productImages[0] %>"
+                                class="img-fluid rounded shadow-sm w-100" alt="Product Image">
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <% product.productImages.forEach(function(image, index) { %>
+                                <img src="<%= image %>" class="img-thumbnail"
+                                    style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
+                                    alt="Thumbnail <%= index + 1 %>">
+                                <% }) %>
+                        </div>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="col-md-6">
+                        <h2 class="product-title mb-3">
+                            <%= product.name %>
+                        </h2>
+                        <p class="text-muted mb-2">
+                            <%= product.description %>
+                        </p>
+                        <p class="text-muted mb-1">Engine: <%= product.engine %>
+                        </p>
+                        <p class="text-muted mb-3">GVW: <%= product.gvw %>
+                        </p>
+                        <h4 class="text-success mb-3">₹ <%= product.price.toLocaleString() %>
+                        </h4>
+
+                        <% if (product.averageRating) { %>
+                            <p>
+                                <span class="text-warning review-stars">
+                                    <% for (let i=1; i <=5; i++) { %>
+                                        <i
+                                            class="bi <%= i <= Math.round(product.averageRating) ? 'bi-star-fill' : 'bi-star' %>"></i>
+                                        <% } %>
+                                </span>
+                                <span class="text-muted">(<%= product.numberOfReviews %> reviews)</span>
+                            </p>
+                            <% } %>
+
+                                <% const isWishlisted=wishlist && wishlist.items.some(item=> item.product.id.toString()
+                                    === product.id.toString()); %>
+                                    <form class="wishlist-toggle-form mb-3" data-product-id="<%= product.id %>">
+                                        <button type="button" class="btn btn-outline-danger text-dark fw-bold w-100">
+                                            <i class="bi <%= isWishlisted ? 'bi-heart-fill' : 'bi-heart' %> me-2"></i>
+                                            <%= isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist' %>
+                                        </button>
+                                    </form>
+
+                                    <form action="/add-cart" method="post">
+                                        <input type="hidden" name="product" value="<%= product.id %>">
+                                        <button type="submit" class="btn btn-dark btn-review">🛒 Add to Cart</button>
+                                    </form>
+                    </div>
+                </div>
+
+                <!-- Review Form -->
+                <div class="row mt-5">
+                    <div class="col-md-8">
+                        <div class="highlighted-section shadow-sm">
+                            <h4 class="mb-4">Write a Review</h4>
+                            <% if (user) { %>
+                                <form action="/review-product/<%= product._id %>" method="POST">
+                                    <div class="mb-3">
+                                        <label for="rating" class="form-label">Rating</label>
+                                        <select name="rating" id="rating" class="form-select" required>
+                                            <option value="">-- Select --</option>
+                                            <% for (let i=1; i <=5; i++) { %>
+                                                <option value="<%= i %>">
+                                                    <%= i %> Star
+                                                </option>
+                                                <% } %>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="comment" class="form-label">Comment</label>
+                                        <textarea name="comment" id="comment" rows="3" class="form-control"
+                                            required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-review">Submit Review</button>
+                                </form>
+                                <% } else { %>
+                                    <p class="text-muted">Please <a href="/login" class="text-primary">login</a> to
+                                        write a review.</p>
+                                    <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Display Reviews -->
+                <div class="row mt-5">
+                    <div class="col-md-8">
+                        <h4 class="mb-4">Customer Reviews</h4>
+                        <% if (product.reviews.length> 0) { %>
+                            <% product.reviews.forEach(function(review) { %>
+                                <div class="card review-card mb-3 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <strong>
+                                                <%= review.user.name %>
+                                            </strong>
+                                            <small class="text-muted">
+                                                <%= new Date(review.createdAt).toLocaleDateString() %>
+                                            </small>
+                                        </div>
+                                        <div class="text-warning mb-2 review-stars">
+                                            <% for (let i=1; i <=5; i++) { %>
+                                                <i
+                                                    class="bi <%= i <= review.rating ? 'bi-star-fill' : 'bi-star' %>"></i>
+                                                <% } %>
+                                        </div>
+                                        <p class="mb-0">
+                                            <%= review.comment %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <% }) %>
+                                    <% } else { %>
+                                        <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+                                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Script -->
+        <script>
+            function magnify(imgID, zoom) {
+                const img = document.getElementById(imgID);
+                const existingGlass = document.querySelector(".img-magnifier-glass");
+                if (existingGlass) existingGlass.remove();
+
+                const glass = document.createElement("DIV");
+                glass.setAttribute("class", "img-magnifier-glass");
+                img.parentElement.insertBefore(glass, img);
+
+                glass.style.backgroundImage = "url('" + img.src + "')";
+                glass.style.backgroundRepeat = "no-repeat";
+                glass.style.backgroundSize = (img.width * zoom) + "px " + (img.height * zoom) + "px";
+
+                const bw = 3;
+                const w = glass.offsetWidth / 2;
+                const h = glass.offsetHeight / 2;
+
+                img.addEventListener("mouseenter", () => glass.style.display = "block");
+                img.addEventListener("mouseleave", () => glass.style.display = "none");
+                img.addEventListener("mousemove", moveMagnifier);
+                glass.addEventListener("mousemove", moveMagnifier);
+
+                function moveMagnifier(e) {
+                    e.preventDefault();
+                    const pos = getCursorPos(e);
+                    let x = pos.x, y = pos.y;
+                    if (x > img.width - (w / zoom)) x = img.width - (w / zoom);
+                    if (x < w / zoom) x = w / zoom;
+                    if (y > img.height - (h / zoom)) y = img.height - (h / zoom);
+                    if (y < h / zoom) y = h / zoom;
+                    glass.style.left = (x - w) + "px";
+                    glass.style.top = (y - h) + "px";
+                    glass.style.backgroundPosition = "-" + ((x * zoom) - w + bw) + "px -" + ((y * zoom) - h + bw) + "px";
+                }
+
+                function getCursorPos(e) {
+                    const a = img.getBoundingClientRect();
+                    const x = e.pageX - a.left - window.pageXOffset;
+                    const y = e.pageY - a.top - window.pageYOffset;
+                    return { x, y };
+                }
+            }
+
+            magnify("mainImage", 8);
+
+            document.querySelectorAll('.img-thumbnail').forEach(thumbnail => {
+                thumbnail.addEventListener('click', function () {
+                    const mainImage = document.getElementById('mainImage');
+                    mainImage.src = this.src;
+                    setTimeout(() => magnify("mainImage", 8), 100);
+                });
+            });
+        </script>
+
+        <%- include("partials/scrollUp") %>
+            <%- include("partials/footer") %>
+                <%- include("partials/scripts") %>
+                    <%- include("partials/wishlistToggle") %>
+                        <%- include("partials/flashUI") %>
+</body>
+
+</html>

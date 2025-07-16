@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/head") %>
+
+    <head>
+        <title>Exciting Offers | Truck Haulers</title>
+        <style>
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+            }
+
+            main {
+                flex: 1;
+            }
+
+            .coupon-card {
+                border: 2px dashed #003366;
+                background: #f8f9fa;
+                padding: 20px;
+                border-radius: 15px;
+                transition: transform 0.2s;
+                height: 100%;
+            }
+
+            .coupon-card:hover {
+                transform: scale(1.02);
+            }
+
+            .copy-btn {
+                margin-left: 10px;
+            }
+
+            @media (max-width: 575.98px) {
+                .coupon-card {
+                    padding: 15px;
+                    font-size: 15px;
+                }
+
+                h5 {
+                    font-size: 1.1rem;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <%- include("partials/navbar") %>
+
+            <main>
+                <section class="py-5 bg-light text-center">
+                    <div class="container">
+                        <h1 class="fw-bold mb-4 text-primary">Available Coupons & Offers</h1>
+                        <p class="mb-5 text-muted">Grab the best deals before they expire!</p>
+
+                        <div class="row g-4">
+                            <% coupons.forEach(coupon=> { %>
+                                <div class="col-12 col-sm-6 col-lg-4 d-flex">
+                                    <div class="coupon-card shadow-sm w-100">
+                                        <h5
+                                            class="fw-bold text-success mb-3 d-flex justify-content-between align-items-center">
+                                            <span class="coupon-code" id="code-<%= coupon.code %>">
+                                                <%= coupon.code %>
+                                            </span>
+                                            <button class="btn btn-sm btn-outline-primary copy-btn"
+                                                data-code="<%= coupon.code %>">Copy</button>
+                                        </h5>
+                                        <p><strong>Discount:</strong> ₹<%= coupon.discountAmount %> off</p>
+                                        <p><strong>Expires On:</strong>
+                                            <%= coupon.expiryDate.toDateString() %>
+                                        </p>
+                                        <p class="text-muted small">Use this code at checkout to enjoy the discount.</p>
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <%- include("partials/footer") %>
+                <%- include("partials/scripts") %>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            document.querySelectorAll('.copy-btn').forEach(button => {
+                                button.addEventListener('click', () => {
+                                    const code = button.getAttribute('data-code');
+                                    navigator.clipboard.writeText(code).then(() => {
+                                        button.innerText = 'Copied!';
+                                        setTimeout(() => {
+                                            button.innerText = 'Copy';
+                                        }, 1500);
+                                    });
+                                });
+                            });
+                        });
+                    </script>
+    </body>
+
+</html>

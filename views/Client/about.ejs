@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Truck Haulers About</title>
+<%- include("partials/head") %>
+</head>
+<%- include("partials/style") %>
+<body>
+
+    <%- include("partials/preLoader") %>
+
+    <!-- Navbar -->
+    <%- include("partials/navbar") %>
+
+        <div class="container my-5 mt-4">
+            <!-- About Section -->
+            <div class="row">
+                <h2 class="text-center mt-6">About Truck Haulers</h2>
+                <p class="text-center bg-success text-white fw-4">Delivering excellence in commercial vehicles since
+                    1948.</p>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <img src="./src/trucks/truck1.avif" class="img-fluid rounded"
+                            alt="Company Image">
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Our Mission</h4>
+                        <p>We strive to build the most reliable and innovative commercial vehicles, ensuring customer
+                            satisfaction and sustainability.</p>
+
+                        <h4>Our Vision</h4>
+                        <p>To be a global leader in the commercial vehicle industry by pushing technological boundaries
+                            and delivering high-quality products.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contributions Section -->
+            <div class="mt-5">
+                <h3 class="text-center">Our Contributions</h3>
+                <p class="text-center">At Truck Haulers, we have made significant contributions to the transportation
+                    industry, offering cutting-edge solutions that help drive economies forward.</p>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h5>Technological Innovations</h5>
+                        <p>We have introduced innovative technologies such as electric buses and advanced engine
+                            systems, which contribute to a greener and more sustainable future for commercial
+                            transportation.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Social Responsibility</h5>
+                        <p>We are committed to supporting various social causes including road safety, education, and
+                            the empowerment of underprivileged communities. Our initiatives aim to make a positive
+                            difference in society.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info Section -->
+            <div class="mt-5 mb-3">
+                <h3 class="text-center">Contact Us</h3>
+                <p class="text-center">For inquiries, reach out to us:</p>
+                <ul class="list-group w-50 mx-auto">
+                    <li class="list-group-item text-dark" style="background: #f8f9fa;"><strong>Address:</strong> Kerala,
+                        India</li>
+                    <li class="list-group-item text-dark"><strong>Phone:</strong> +91 1234 567 890</li>
+                    <li class="list-group-item text-dark"><strong>Email:</strong> info@truckhaulers.com</li>
+                </ul>
+            </div>
+        </div>
+
+                <%- include("partials/scrollUp") %>
+
+        <!-- Footer -->
+        <%- include("partials/footer") %>
+
+            <!-- Scripts -->
+        <%- include("partials/scripts") %>
+
+</body>
+
+</html>

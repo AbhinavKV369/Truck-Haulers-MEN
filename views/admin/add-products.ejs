@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<%- include("partials/head") %>
+
+    <body style="color: black;">
+        <%- include("partials/navbar") %>
+
+            <div class="container my-4">
+                <h1 class="text-center">Admin Panel - Add Product</h1>
+
+                <% if(message){ %>
+                    <p class="bg-success text-white alert">
+                        <%= message %>
+                    </p>
+                    <% } %>
+
+                        <form action="/admin/add-product" method="POST" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Product Name</label>
+                                <input type="text" class="form-control border-primary" id="name" name="name" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control border-primary" id="description" name="description"
+                                    required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="engine" class="form-label">Engine</label>
+                                <input class="form-control border-primary" id="engine" name="engine" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="gvw" class="form-label">GVW</label>
+                                <input class="form-control border-primary" id="gvw" name="gvw" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="productImage" class="form-label">Images</label>
+                                <input type="file" class="form-control border-primary" id="productImage"
+                                    name="productImage[]" required multiple>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Price</label>
+                                <input type="number" class="form-control border-primary" id="price" name="price"
+                                    required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-select border-primary" id="category" name="category" required>
+                                    <option value="truck">Truck</option>
+                                    <option value="bus">Bus</option>
+                                    <option value="lmv">Light Vehicle</option>
+                                    <option value="mmv">Medium Vehicle</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn mb-3 text-white" style="background: #106ec6;">Add
+                                Product</button>
+                        </form>
+            </div>
+
+            <%- include("partials/scripts") %>
+    </body>
+
+</html>

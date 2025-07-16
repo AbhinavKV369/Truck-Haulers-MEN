@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truck Haulers | Light Vehicles</title>
+
+  <%- include("partials/head") %>
+
+</head>
+
+<%- include("partials/style") %>
+
+    <body>
+
+        <%- include("partials/preLoader") %>
+
+        <%- include("partials/navbar") %>
+
+            <!-- Hero Section -->
+            <section class="position-relative text-light" style="height: 100vh; overflow: hidden;">
+                <img src="/src/light-vehicles/intro.png" alt="Light Vehicle Background Image"
+                    class="position-absolute w-100 h-100" style="object-fit: cover; z-index: -1;">
+            </section>
+
+            <!-- Intro Text -->
+            <section class="container py-5">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h1 class="fw-bold mb-4" style="color: #003366;">Welcome to Our Light Vehicle Collection</h1>
+                        <p class="lead fw-semibold mb-3">
+                            Our light vehicles are designed to provide a perfect balance between performance, comfort,
+                            and fuel efficiency.
+                        </p>
+                        <p class="fw-semibold">
+                            Discover compact city cars, stylish sedans, and economical hatchbacks built for everyday
+                            driving with excellent reliability and low emissions.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Light Vehicles Listing -->
+            <section class="container py-5">
+                <div class="row g-4">
+                    <% products.forEach(product=> { %>
+                        <div class="col-md-4 mb-4">
+                            <div class="card vehicle-card h-100 position-relative">
+                    
+                                <% const isWishlisted=wishlist && wishlist.items.some(item=> item.product._id.toString()
+                                    === product._id.toString()); %>
+                                    <form class="wishlist-toggle-form position-absolute top-0 end-0 m-2"
+                                        data-product-id="<%= product._id %>">
+                                        <button type="button" aria-label="Toggle Wishlist for <%= product.name %>"
+                                            class="btn btn-sm rounded-circle wishlist-btn <%= isWishlisted ? 'btn-danger' : 'btn-light' %>">
+                                            <i class="bi <%= isWishlisted ? 'bi-heart-fill' : 'bi-heart' %>"></i>
+                                        </button>
+                                    </form>
+                    
+                                    <!-- Product Image -->
+                                    <img src="<%= product.productImages[0] %>" alt="<%= product.name %>" class="card-img-top product-img">
+                    
+                                    <!-- Product Details -->
+                                    <div class="card-body d-flex flex-column">
+                                        <h6 class="card-title fw-semibold">
+                                            <%= product.name %>
+                                        </h6>
+                                        <p class="text">
+                                            <%= product.description %>
+                                        </p>
+                                        <p class="text-dark fw-bold mb-3">₹ <%= product.price.toLocaleString() %>
+                                        </p>
+                                        <div class="mt-auto d-flex justify-content-between">
+                                            <form action="/add-cart" method="post">
+                                                <input type="hidden" name="product" value="<%= product.id %>">
+                                                <button type="submit" class="btn btn-sm custom-primary-btn">Add to Cart</button>
+                                            </form>
+                    
+                                            <a href="/view-product/<%= product.id %>"
+                                                class="btn btn-sm bg-success btn-outline-primary">View</a>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                            </div>
+                            </section>
+                    
+                            <%- include("partials/scrollUp") %>
+                    
+                                <%- include("partials/footer") %>
+                    
+                                    <%- include("partials/scripts") %>
+                                        <%- include("partials/wishlistToggle") %>
+                    
+                                            </body>
+                    
+                                            </html>

@@ -1,0 +1,67 @@
+<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css" />
+<style>
+    .notyf__message {
+        font-size: 16px !important;
+        white-space: nowrap;
+ 
+    }
+
+    .notyf__toast {
+        min-width: 250px;
+        max-width: 250px;
+        text-align: center;
+    }
+</style>
+  
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const notyf = new Notyf({
+            duration: 2000,
+            position: { x: 'right', y: 'top' }
+        });
+
+        function bindWishlistToggleButtons() {
+            document.querySelectorAll('.wishlist-toggle-form').forEach(form => {
+                form.addEventListener('click', async (e) => {
+                    if (e.target.closest('button')) {
+                        e.preventDefault();
+                        const productId = form.dataset.productId;
+
+                        try {
+                            const res = await fetch('/wishlist/toggle', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                },
+                                body: JSON.stringify({ product: productId })
+                            });
+
+                            const data = await res.json();
+                            const btn = form.querySelector('button');
+                            const icon = btn.querySelector('i');
+
+                            if (data.success) {
+                                btn.classList.toggle('btn-danger', data.isWishlisted);
+                                btn.classList.toggle('btn-light', !data.isWishlisted);
+                                icon.className = data.isWishlisted ? 'bi bi-heart-fill' : 'bi bi-heart';
+
+                                notyf.success(data.isWishlisted
+                                    ? 'Added to wishlist!'
+                                    : 'Removed from wishlist!');
+                            } else {
+                                notyf.error(data.message || 'Failed to toggle wishlist');
+                            }
+                        } catch (err) {
+                            console.error('Wishlist toggle failed:', err);
+                            notyf.error('Error toggling wishlist');
+                        }
+                    }
+                });
+            });
+        }
+
+        bindWishlistToggleButtons();
+    });
+</script>

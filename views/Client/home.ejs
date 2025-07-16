@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Truck Haulers Home</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3050/3050525.png" />
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="Truck Haulers: Sustainable transportation solutions including trucks, buses, and light vehicles. Discover quality and innovation.">
+    <meta name="keywords"
+        content="Trucks, Buses, Light Vehicles, Transportation, Sustainable Vehicles, Truck Haulers India">
+    <meta name="author" content="Truck Haulers">
+
+    <%- include("partials/head") %>
+</head>
+
+<%- include("partials/preLoader") %>
+    <%- include("partials/style") %>
+
+        <body>
+            <%- include("partials/navbar") %>
+
+                <!-- Hero Banner -->
+                <% let bannerImage=banner && banner.bannerImage ? banner.bannerImage : '/images/default-banner.jpg' ; %>
+                    <section class="position-relative text-white"
+                        style="height: 100vh; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.3)), url('<%= bannerImage %>') center center / cover no-repeat;">
+                        <div
+                            class="container h-100 d-flex flex-column justify-content-center align-items-center text-center">
+                            <div class="p-5 rounded-4 shadow-lg"
+                                style="background: rgba(0, 0, 0, 0.5); max-width: 800px;">
+                                <h1 class="display-2 fw-bold mb-4 animate__animated animate__fadeInDown">
+                                    <%= banner && banner.heading ? banner.heading : "Welcome to Truck Haulers" %>
+                                </h1>
+                                <p class="fs-4 mb-4 animate__animated animate__fadeInUp">
+                                    <%= banner && banner.description ? banner.description
+                                        : "We provide the best vehicles for your transport needs." %>
+                                </p>
+                                <a href="/products"
+                                    class="btn btn-md text-light px-5 py-3 btn-main animate__animated animate__zoomIn"
+                                    style="background: #003366; font-size: 20px;">
+                                    Explore Our Vehicles
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Why Choose Us -->
+                    <section class="py-5 bg-light">
+                        <div class="container text-center">
+                            <h2 class="section-title mb-5">Why Choose Truck Haulers?</h2>
+                            <div class="row row-cols-1 row-cols-md-3 g-4">
+                                <div class="col">
+                                    <div class="card-style rounded-4 p-4 h-100">
+                                        <i class="fas fa-shipping-fast fa-3x text-primary mb-3"></i>
+                                        <h5 class="fw-semibold mb-2">Fast & Reliable</h5>
+                                        <p class="text-muted small">Timely, dependable delivery with unmatched
+                                            professionalism.</p>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="card-style rounded-4 p-4 h-100">
+                                        <i class="fas fa-leaf fa-3x text-success mb-3"></i>
+                                        <h5 class="fw-semibold mb-2">Eco-Friendly</h5>
+                                        <p class="text-muted small">Sustainability is at the core of our fleet and
+                                            operations.</p>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="card-style rounded-4 p-4 h-100">
+                                        <i class="fas fa-headset fa-3x text-warning mb-3"></i>
+                                        <h5 class="fw-semibold mb-2">24/7 Support</h5>
+                                        <p class="text-muted small">We’re here whenever you need us — day or night.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Vehicle Categories -->
+                    <section class="py-5 bg-white">
+                        <div class="container text-center">
+                            <h2 class="section-title mb-5 display-6 fw-bold">Our Vehicle Categories</h2>
+                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                                <div class="col">
+                                    <a href="/trucks" class="text-decoration-none text-dark">
+                                        <div class="card-style rounded-4 p-3 h-100">
+                                            <i class="fas fa-truck fa-3x text-primary mb-3"></i>
+                                            <h5 class="fw-semibold mb-2">Trucks</h5>
+                                            <p class="text-muted small">Heavy-duty trucks for every business need.</p>
+                                            <button class="btn btn-outline-primary btn-sm rounded-pill mt-3">Explore
+                                                Trucks <i class="fas fa-arrow-right ms-2"></i></button>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <a href="/buses" class="text-decoration-none text-dark">
+                                        <div class="card-style rounded-4 p-3 h-100">
+                                            <i class="fas fa-bus fa-3x text-primary mb-3"></i>
+                                            <h5 class="fw-semibold mb-2">Buses</h5>
+                                            <p class="text-muted small">Safe, reliable transportation solutions.</p>
+                                            <button class="btn btn-outline-primary btn-sm rounded-pill mt-3">Explore
+                                                Buses <i class="fas fa-arrow-right ms-2"></i></button>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <a href="/light-vehicles" class="text-decoration-none text-dark">
+                                        <div class="card-style rounded-4 p-3 h-100">
+                                            <i class="fas fa-car-side fa-3x text-primary mb-3"></i>
+                                            <h5 class="fw-semibold mb-2">Light Vehicles</h5>
+                                            <p class="text-muted small">Efficiency and style for urban transport.</p>
+                                            <button class="btn btn-outline-primary btn-sm rounded-pill mt-3">Explore
+                                                Light Vehicles <i class="fas fa-arrow-right ms-2"></i></button>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <a href="/medium-vehicles" class="text-decoration-none text-dark">
+                                        <div class="card-style rounded-4 p-3 h-100">
+                                            <i class="fas fa-shuttle-van fa-3x text-primary mb-3"></i>
+                                            <h5 class="fw-semibold mb-2">Medium Vehicles</h5>
+                                            <p class="text-muted small">Versatile solutions for diverse needs.</p>
+                                            <button class="btn btn-outline-primary btn-sm rounded-pill mt-3">Explore
+                                                Medium Vehicles <i class="fas fa-arrow-right ms-2"></i></button>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Services -->
+                    <section class="py-5 bg-light">
+                        <div class="container text-center">
+                            <h2 class="section-title mb-5 display-6 fw-bold">Our Services</h2>
+                            <div class="row row-cols-1 row-cols-md-3 g-4">
+                                <div class="col">
+                                    <div class="card-style rounded-4 p-4 h-100">
+                                        <i class="fas fa-tools fa-3x text-primary mb-4"></i>
+                                        <h5 class="fw-semibold mb-3">Maintenance Support</h5>
+                                        <p class="text-muted small">Complete vehicle servicing and after-sales support.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="card-style rounded-4 p-4 h-100">
+                                        <i class="fas fa-handshake fa-3x text-primary mb-4"></i>
+                                        <h5 class="fw-semibold mb-3">Consultation & Financing</h5>
+                                        <p class="text-muted small">Helping you with vehicle purchase and finance
+                                            options.</p>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="card-style rounded-4 p-4 h-100">
+                                        <i class="fas fa-cogs fa-3x text-primary mb-4"></i>
+                                        <h5 class="fw-semibold mb-3">Custom Solutions</h5>
+                                        <p class="text-muted small">Tailored vehicles to match your business
+                                            requirements.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <%- include("partials/scrollUp") %>
+                        <%- include("partials/footer") %>
+                            <%- include("partials/scripts") %>
+                                <%- include("partials/flashUI") %>
+        </body>
+
+</html>

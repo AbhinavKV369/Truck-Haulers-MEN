@@ -1,0 +1,87 @@
+<!-- Preloader -->
+<div id="preloader" class="preloader">
+    <div class="loader-inner text-center">
+        <!-- Replace logo path as needed -->
+        <img src="src/booter.png" alt="Truck Haulers Logo" class="rotate-logo mb-3" width="100" />
+        <div class="spinner"></div>
+        <p class="loading-text">Loading, please wait...</p>
+    </div>
+</div>
+
+<style>
+    /* Preloader Container */
+    .preloader {
+        position: fixed;
+        inset: 0;
+        background-color: #f9f9f9;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+
+    .preloader.fade-out {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    /* Inner loader box */
+    .loader-inner {
+        text-align: center;
+    }
+
+    /* Rotating Logo */
+    .rotate-logo {
+        animation: spin 3s linear infinite;
+        display: block;
+        margin: 0 auto 20px;
+        filter: drop-shadow(0 0 5px #007bff88);
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Custom Spinner */
+    .spinner {
+        width: 50px;
+        height: 50px;
+        margin: 0 auto 15px;
+        border: 5px solid #007bff;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin-spinner 1s linear infinite;
+    }
+
+    @keyframes spin-spinner {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Loading Text */
+    .loading-text {
+        font-weight: 600;
+        color: #555;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 1.1rem;
+    }
+</style>
+
+<script>
+    window.addEventListener("load", () => {
+        const preloader = document.getElementById("preloader");
+        if (preloader) {
+            preloader.classList.add("fade-out");
+            setTimeout(() => preloader.remove(), 700);
+        }
+    });
+</script>
+  

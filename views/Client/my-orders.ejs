@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Orders - Truck Haulers</title>
+  <%- include("partials/head") %>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<%- include("partials/style") %>
+
+  <body class="bg-light">
+    <%- include("partials/preLoader") %>
+      <%- include("partials/navbar") %>
+
+        <div class="container mt-5">
+          <h2 class="text-center mb-4 fw-bold text-dark">🛒 Your <span class="text-primary">Orders</span></h2>
+
+          <% if (orders.length> 0) { %>
+            <% orders.forEach(order=> { %>
+              <div class="bg-white p-4 shadow rounded mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                  <div>
+                    <strong>Order ID:</strong>
+                    <%= order._id %><br>
+                      <small class="text-muted">Placed on: <%= new Date(order.orderDate).toLocaleDateString() %></small>
+                  </div>
+                  <div>
+                    <strong>Order status:</strong>
+                    <span
+                      class="badge bg-<%= order.status === 'canceled' ? 'danger' : order.status === 'delivered' ? 'success' : 'secondary' %> text-capitalize px-3 py-2">
+                      <%= order.status %>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                        <th class="text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% order.items.forEach(item=> { %>
+                        <tr>
+                          <td>
+                            <% if (item.product) { %>
+                              <div class="d-flex align-items-center">
+                                <img src="<%= item.product.productImages[0] %>" alt="Product Image" class="rounded me-2"
+                                  style="width: 50px; height: 50px; object-fit: cover;">
+                                <div><strong>
+                                    <%= item.product.name %>
+                                  </strong></div>
+                              </div>
+                              <% } else { %>
+                                <span class="text-danger">Product not available</span>
+                                <% } %>
+                          </td>
+                          <td>
+                            <%= item.quantity %>
+                          </td>
+                          <td>₹<%= item.product?.price %>
+                          </td>
+                          <td>₹<%= item.product?.price * item.quantity %>
+                          </td>
+                          <td class="text-center">
+                            <% if (order.status==='delivered' && item.product) { %>
+                              <% if (item.replaceStatus==='requested' ) { %>
+                                <strong>Replacement Status:</strong>
+                                <button class="btn btn-sm btn-secondary" disabled>Requested</button>
+                                <% } else if (item.replaceStatus==='approved' ) { %>
+                                  <strong>Replacement Status:</strong>
+                                  <button class="btn btn-sm btn-success" disabled>Approved</button>
+                                  <% } else if (item.replaceStatus==='rejected' ) { %>
+                                    <strong>Replacement Status:</strong>
+                                    <button class="btn btn-sm btn-danger" disabled>Rejected</button>
+                                    <% } else if (item.replaceStatus==='returned' ) { %>
+                                      <strong>Replacement Status:</strong>
+                                      <button class="btn btn-sm btn-info" disabled>Returned</button>
+                                      <% } else { %>
+                                        <form action="/replace-product/<%= order._id %>/<%= item._id %>" method="POST"
+                                          class="d-inline replace-form">
+                                          <input type="hidden" name="reason" />
+                                          <button type="submit" class="btn btn-sm btn-outline-warning border-3">Request
+                                            Replacement</button>
+                                        </form>
+                                        <% } %>
+                                          <% } else { %>
+                                            <button class="btn btn-sm btn-success" disabled>On the way</button>
+                                            <% } %>
+                          </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                    <tfoot class="table-light">
+                      <tr>
+                        <td colspan="3" class="text-end fw-bold">Total:</td>
+                        <td colspan="2" class="fw-bold">₹<%= order.totalAmount %>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                  <% if(order.status==="delivered" ){ %>
+                    <a href="/order-invoice/<%= order._id %>" class="btn btn-sm bg-primary">Download Invoice</a>
+                    <% } %>
+
+                      <% if(order.status !=="delivered" ){ %>
+                        <form action="/cancel-order/<%= order._id %>" method="POST" class="cancel-form d-inline">
+                          <button type="submit" class="btn btn-sm btn-danger bg-danger" <%=order.status==='canceled'
+                            ? 'disabled' : '' %>>
+                            <%= order.status==='canceled' ? '' : 'Cancel Order' %>
+                          </button>
+                        </form>
+                        <% } %>
+                </div>
+              </div>
+              <% }) %>
+                <% } else { %>
+                  <div class="alert alert-warning text-center mt-5 shadow-sm">
+                    <h5>No orders yet!</h5>
+                    <a href="/products" class="btn btn-primary mt-3">Start Shopping</a>
+                  </div>
+                  <% } %>
+        </div>
+
+        <%- include("partials/footer") %>
+          <%- include("partials/scripts") %>
+            <%- include("partials/flashUI") %>
+
+              <script>
+                document.querySelectorAll('.cancel-form').forEach(form => {
+                  form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    Swal.fire({
+                      title: 'Are you sure?',
+                      text: "Do you really want to cancel this order?",
+                      icon: 'warning',
+                      showCancelButton: true,
+                      confirmButtonColor: '#d33',
+                      cancelButtonColor: '#3085d6',
+                      confirmButtonText: 'Yes, cancel it!',
+                      reverseButtons: true
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        form.submit();
+                      }
+                    });
+                  });
+                });
+
+                document.querySelectorAll('.replace-form').forEach(form => {
+                  form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    Swal.fire({
+                      title: 'Replacement Reason',
+                      input: 'textarea',
+                      inputLabel: 'Please provide a reason for requesting a replacement:',
+                      inputPlaceholder: 'Type your reason here...',
+                      inputAttributes: {
+                        'aria-label': 'Replacement reason'
+                      },
+                      showCancelButton: true,
+                      confirmButtonText: 'Submit',
+                      cancelButtonText: 'Cancel',
+                      confirmButtonColor: '#ffc107'
+                    }).then(result => {
+                      if (result.isConfirmed && result.value.trim() !== "") {
+                        form.querySelector('input[name="reason"]').value = result.value;
+                        form.submit();
+                      } else if (result.isConfirmed) {
+                        Swal.fire('Reason is required!', '', 'error');
+                      }
+                    });
+                  });
+                });
+              </script>
+  </body>
+
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Truck Haulers Cart</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <%- include("partials/head") %>
+
+        <style>
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            main {
+                flex-grow: 1;
+            }
+        </style>
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-gradient shadow-sm p-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold"
+                style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333;" href="/">
+                <span class="text-primary">TRUCK</span> HAULERS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto fw-bold">
+
+                    <!-- Home & Products -->
+                    <li class="nav-item me-3">
+                        <a class="nav-link text-dark hover-underline-animation" href="/">Home</a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a class="nav-link text-dark hover-underline-animation" href="/products">Products</a>
+                    </li>
+
+                    <!-- Categories Dropdown -->
+                    <li class="nav-item me-3 dropdown">
+                        <a class="nav-link dropdown-toggle text-dark hover-underline-animation" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Categories
+                        </a>
+                        <ul class="dropdown-menu border-0 shadow-lg">
+                            <li><a class="dropdown-item text-dark" href="/buses">Buses</a></li>
+                            <li><a class="dropdown-item text-dark" href="/trucks">Trucks</a></li>
+                            <li><a class="dropdown-item text-dark" href="/light-vehicles">Light Vehicles</a></li>
+                            <li><a class="dropdown-item text-dark" href="/medium-vehicles">Medium Vehicles</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Info Dropdown -->
+                    <li class="nav-item me-3 dropdown">
+                        <a class="nav-link dropdown-toggle text-dark hover-underline-animation" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Info
+                        </a>
+                        <ul class="dropdown-menu border-0 shadow-lg">
+                            <li><a class="dropdown-item text-dark" href="/about">About Us</a></li>
+                            <li><a class="dropdown-item text-dark" href="/contact">Contact Us</a></li>
+                            <li><a class="dropdown-item text-dark" href="/services">Services</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Offers -->
+                    <li class="nav-item me-3">
+                        <a class="nav-link position-relative text-dark hover-underline-animation" href="/coupons">
+                            <i class="fas fa-tag me-1"></i> Offers
+                        </a>
+                    </li>
+
+                    <!-- Authenticated Users -->
+                    <% if (user) { %>
+                        <li class="nav-item me-3">
+                            <a class="nav-link text-dark hover-underline-animation" href="/user-dashboard">
+                                <i class="fas fa-user"></i> Hub
+                            </a>
+                        </li>
+                        <li class="nav-item me-3">
+                            <a class="nav-link text-dark hover-underline-animation" href="/logout">Logout</a>
+                        </li>
+                        <li class="nav-item me-3">
+                            <a class="nav-link position-relative text-dark hover-underline-animation" href="/wishlist"
+                                aria-label="Wishlist">
+                                ❤️
+                            </a>
+                        </li>
+                        <li class="nav-item me-3">
+                            <a class="nav-link position-relative text-dark hover-underline-animation" href="/cart"
+                                aria-label="Cart">
+                                🛒 Cart
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger text-white">
+                                    <%= cartCount || 0 %>
+                                </span>
+                            </a>
+                        </li>
+                        <% } else { %>
+
+                            <!-- Guest Users -->
+                            <li class="nav-item me-3">
+                                <a class="nav-link text-dark hover-underline-animation" href="/login">Login</a>
+                            </li>
+                            <li class="nav-item me-3">
+                                <a class="nav-link position-relative text-dark hover-underline-animation"
+                                    href="/wishlist" aria-label="Wishlist">
+                                    ❤️
+                                </a>
+                            </li>
+                            <li class="nav-item me-3">
+                                <a class="nav-link position-relative text-dark hover-underline-animation" href="/cart"
+                                    aria-label="Cart">
+                                    🛒 Cart
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger text-white">
+                                        <%= cartCount || 0 %>
+                                    </span>
+                                </a>
+                            </li>
+                            <% } %>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5">
+        <h2 class="mb-5 text-center fw-bold">🛒 Your Shopping Cart</h2>
+
+        <% if (items.length> 0) { %>
+            <% items.forEach(item=> { %>
+                <div class="row cart-item align-items-center p-3 mb-4 mx-1 border rounded flex-column flex-md-row"
+                    data-id="<%= item.product._id %>">
+
+                    <div class="col-12 col-md-2 mb-3 mb-md-0">
+                        <img src="<%= item.product?.productImages[0] || '/images/default.png' %>" class="img-fluid"
+                            alt="<%= item.product?.name ?? 'Product image' %>">
+                    </div>
+
+                    <div class="col-12 col-md-4 mb-3 mb-md-0">
+                        <h6 class="mb-1 text-muted">Product</h6>
+                        <p class="fw-semibold mb-0 text-dark">
+                            <%= item.product?.name ?? 'Unknown' %>
+                        </p>
+                    </div>
+
+                    <div class="col-12 col-md-2 mb-3 mb-md-0">
+                        <h6 class="text-muted">Quantity</h6>
+                        <div class="d-flex align-items-center">
+                            <button class="btn btn-sm btn-outline-secondary decrement-btn" <%=item.quantity===1
+                                ? 'disabled' : '' %>>-</button>
+                            <span class="mx-2 fw-semibold quantity">
+                                <%= item.quantity %>
+                            </span>
+                            <button class="btn btn-sm btn-outline-secondary increment-btn" <%=item.product.stock &&
+                                item.quantity>= item.product.stock ? 'disabled' : '' %>>+</button>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-2 mb-3 mb-md-0">
+                        <h6 class="text-muted">Subtotal</h6>
+                        <p class="fw-semibold subtotal">₹<%= (item.product.price * item.quantity).toFixed(2) %>
+                        </p>
+                    </div>
+
+                    <div class="col-12 col-md-2 text-md-end">
+                        <button class="btn btn-md bg-danger btn-remove text-white"
+                            title="Remove this item">Remove</button>
+                    </div>
+                </div>
+                <% }) %>
+
+                    <!-- Order Summary -->
+                    <div class="row mt-5">
+                        <div class="col-md-6 offset-md-6">
+                            <div class="summary-box shadow-sm p-4 bg-white rounded">
+                                <h5 class="fw-bold">Order Summary</h5>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Total Items:</span>
+                                    <strong id="totalQuantity">
+                                        <%= quantity %>
+                                    </strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-4">
+                                    <span>Total Price:</span>
+                                    <strong>₹<span id="totalAmount">
+                                            <%= total.toFixed(2) %>
+                                        </span></strong>
+                                </div>
+                                <a href="/checkout" class="text-decoration-none">
+                                    <button class="btn btn-primary w-100 fw-bold">Proceed to Checkout</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <% } else { %>
+                        <!-- Empty Cart -->
+                        <div class="text-center mt-5">
+                            <img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" class="empty-cart-img"
+                                alt="Empty Cart" style="max-width:150px;">
+                            <h4 class="fw-bold mt-3">Your cart is currently empty</h4>
+                            <p class="text-muted">Looks like you haven't added anything yet.</p>
+                            <a href="/products" class="btn btn-outline-primary mt-3 fw-bold">Start Shopping</a>
+                        </div>
+                        <% } %>
+    </main>
+
+    <%- include("partials/scrollUp") %>
+        <%- include("partials/footer") %>
+            <%- include("partials/scripts") %>
+
+                <!-- Notyf -->
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css" />
+                <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", () => {
+                        const notyf = new Notyf({
+                            duration: 1000,
+                            position: { x: 'right', y: 'top' }
+                        });
+                        const cartItems = document.querySelectorAll(".cart-item");
+
+                        cartItems.forEach(row => {
+                            const productId = row.dataset.id;
+
+                            row.querySelector(".increment-btn")?.addEventListener("click", async () => {
+                                try {
+                                    const res = await fetch(`/cart/increment/${productId}`, { method: "POST" });
+                                    const data = await res.json();
+                                    updateCartRow(row, data);
+                                    notyf.success("Item quantity increased");
+                                } catch (err) {
+                                    console.error("Error incrementing item:", err);
+                                    notyf.error("Error increasing quantity");
+                                }
+                            });
+
+                            row.querySelector(".decrement-btn")?.addEventListener("click", async () => {
+                                try {
+                                    const res = await fetch(`/cart/decrement/${productId}`, { method: "POST" });
+                                    const data = await res.json();
+
+                                    if (data.quantity === 0) {
+                                        row.remove();
+                                    } else {
+                                        updateCartRow(row, data);
+                                    }
+
+                                    if (data.totalQuantity === 0) {
+                                        setTimeout(() => location.reload(), 300);
+                                    } else {
+                                        notyf.success("Item quantity decreased");
+                                    }
+                                } catch (err) {
+                                    console.error("Error decrementing item:", err);
+                                    notyf.error("Error decreasing quantity");
+                                }
+                            });
+
+                            row.querySelector(".btn-remove")?.addEventListener("click", async () => {
+                                try {
+                                    const res = await fetch(`/remove-item/${productId}`, { method: "POST" });
+                                    const data = await res.json();
+
+                                    row.remove();
+                                    document.getElementById("totalAmount").textContent = parseFloat(data.total).toFixed(2);
+                                    document.getElementById("totalQuantity").textContent = data.totalQuantity;
+
+                                    // Update navbar cart count badge dynamically
+                                    const cartBadgeElements = document.querySelectorAll('a[href="/cart"] span.badge');
+                                    cartBadgeElements.forEach(badge => {
+                                        badge.textContent = data.totalQuantity;
+                                    });
+
+                                    notyf.success("Item removed");
+
+                                    if (data.totalQuantity === 0) {
+                                        setTimeout(() => location.reload(), 300);
+                                    }
+                                } catch (err) {
+                                    console.error("Error removing item:", err);
+                                    notyf.error("Failed to remove item");
+                                }
+                            });
+                        });
+
+                        function updateCartRow(row, data) {
+                            row.querySelector(".quantity").textContent = data.quantity;
+                            row.querySelector(".subtotal").textContent = "₹" + parseFloat(data.subTotal).toFixed(2);
+                            row.querySelector(".decrement-btn").disabled = data.quantity === 1;
+                            document.getElementById("totalAmount").textContent = parseFloat(data.total).toFixed(2);
+                            document.getElementById("totalQuantity").textContent = data.totalQuantity;
+
+                            // Update navbar cart count badge dynamically
+                            const cartBadgeElements = document.querySelectorAll('span.badge');
+                            cartBadgeElements.forEach(badge => {
+                                badge.textContent = data.totalQuantity;
+                            });
+                        }
+                    });
+                </script>
+
+                <%- include("partials/msgFlash") %>
+</body>
+
+</html>

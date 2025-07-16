@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Truck Haulers Vehicle Checkout</title>
+  <%- include("partials/head") %>
+
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+
+      header {
+        background: linear-gradient(135deg, #0d6efd, #6610f2);
+        color: white;
+        box-shadow: 0 4px 10px rgba(13, 110, 253, 0.4);
+      }
+
+      .cart-item {
+        background: #fff;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 12px rgb(0 0 0 / 0.05);
+        transition: box-shadow 0.3s ease;
+        padding: 1rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .cart-item:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      }
+
+      .badge-price {
+        background-color: #0d6efd;
+        font-weight: 600;
+        font-size: 1rem;
+        color: #fff;
+        border-radius: 50px;
+        padding: 0.5rem 1rem;
+        white-space: nowrap;
+        box-shadow: 0 4px 10px rgba(13, 110, 253, 0.6);
+      }
+
+      .img-thumb {
+        width: 100px;
+        height: 70px;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .img-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    </style>
+</head>
+
+<body>
+  <%- include("partials/preLoader") %>
+    <header class="text-center py-5">
+      <div class="container">
+        <h1 class="display-4 fw-bold">Truck Haulers Checkout</h1>
+        <p class="lead">Review your vehicle order and complete your purchase</p>
+      </div>
+    </header>
+
+    <section class="container py-5">
+      <h2 class="text-center mb-5 fw-bold">Order Checkout</h2>
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <h4 class="mb-3 fw-semibold">Vehicles in Your Cart</h4>
+          <div>
+            <% items.forEach(item=> { %>
+              <div class="cart-item d-flex align-items-center justify-content-between">
+                <div class="img-thumb me-3">
+                  <img src="<%= item.product.productImages[0] || '' %>" alt="<%= item.product.name %>" />
+                </div>
+                <div class="flex-grow-1">
+                  <h5 class="fw-bold mb-1">
+                    <%= item.product.name %>
+                  </h5>
+                  <p class="mb-2 text-muted small">
+                     <%= item.product.description %>
+                  </p>
+                  <p class="mb-0"><strong>Quantity:</strong>
+                    <%= item.quantity %>
+                  </p>
+                </div>
+                <span class="badge-price">Rs. <%= (item.product.price * item.quantity).toFixed(2) %></span>
+              </div>
+              <% }) %>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="bg-white p-4 rounded-4 shadow-sm">
+            <h5 class="text-center mb-4 fw-bold border-bottom pb-3">Order Summary</h5>
+            <ul class="list-group mb-4">
+              <li class="list-group-item d-flex justify-content-between py-2">
+                <span>Subtotal</span>
+                <strong>Rs. <%= cart.items.reduce((sum, item)=> sum + item.product.price * item.quantity, 0).toFixed(2)
+                    %></strong>
+              </li>
+              <li class="list-group-item d-flex justify-content-between py-2">
+                <span>Tax (30%)</span>
+                <strong>Rs. <%= cart.items.reduce((sum, item)=> sum + item.product.price * item.quantity * 0.3,
+                    0).toFixed(2) %></strong>
+              </li>
+              <li class="list-group-item d-flex justify-content-between py-2">
+                <span>Shipping</span>
+                <strong>Free</strong>
+              </li>
+              <li class="list-group-item d-flex justify-content-between pt-3 fw-bold fs-5">
+                <span>Total</span>
+                <span class="text-primary">Rs. <%= cart.items.reduce((sum, item)=> sum + item.product.price *
+                    item.quantity * 1.3, 0).toFixed(2) %></span>
+              </li>
+            </ul>
+
+            <h6 class="text-center mb-3 fw-semibold">Buyer Information</h6>
+            <form action="/order-summary" method="POST" id="checkoutForm" novalidate>
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName" class="form-control" value="<%= userDetails.name %>"
+                  readonly />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control" value="<%= userDetails.email %>"
+                  readonly />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="addressSelect">Select Address</label>
+                <select class="form-select" id="addressSelect" name="selectedAddress" required>
+                  <% userDetails.addresses.forEach((address, index)=> { %>
+                    <option value="<%= index %>" <%=index===0 ? 'selected' : '' %>>
+                      <%= address.street %>, <%= address.city %>, <%= address.district %>, <%= address.state %> - <%=
+                                address.pincode %>
+                    </option>
+                    <% }) %>
+                </select>
+              </div>
+
+              <div class="mb-4">
+                <h6 class="text-center fw-bold pb-2">Shipping Address</h6>
+                <input type="text" class="form-control mb-2" name="address[street]" id="street" placeholder="Street"
+                  required />
+                <input type="text" class="form-control mb-2" name="address[city]" id="city" placeholder="City"
+                  required />
+                <input type="text" class="form-control mb-2" name="address[district]" id="district"
+                  placeholder="District" required />
+                <input type="text" class="form-control mb-2" name="address[state]" id="state" placeholder="State"
+                  required />
+                <input type="text" class="form-control mb-2" name="address[pincode]" id="pincode" placeholder="Pincode"
+                  required />
+                  <input type="number" class="form-control mb-2" name="address[phone]" id="phone" placeholder="Phone Number"
+                    value="<%= userDetails.phone || '' %>" required />
+                
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label fw-semibold" for="paymentMethod">Payment Method</label>
+                <select name="paymentMethod" id="paymentMethod" class="form-select" required>
+                  <option value="" disabled selected>Select Payment Method</option>
+                  <option value="cod">Cash on Delivery</option>
+                  <option value="stripe">Stripe</option>
+
+                </select>
+              </div>
+
+              <div id="paypal-container" class="mt-3" style="display: none;">
+                <div id="paypal-button-container"></div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-semibold" for="couponCode">Coupon Code</label>
+                <input type="text" class="form-control" name="couponCode" id="couponCode"
+                  placeholder="Enter your coupon code" />
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100 rounded-pill">Complete Purchase</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="text-center py-4 text-muted" style="background-color: #e9ecef;">
+      <p class="mb-0" style="font-size: 0.9rem;">&copy; 2025 Truck Haulers. All rights reserved.</p>
+    </footer>
+
+    <input type="hidden" id="addresses" value='<%- JSON.stringify(userDetails.addresses || []) %>' />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      const addresses = JSON.parse(document.getElementById('addresses').value);
+      const streetInput = document.getElementById('street');
+      const cityInput = document.getElementById('city');
+      const districtInput = document.getElementById('district');
+      const stateInput = document.getElementById('state');
+      const pincodeInput = document.getElementById('pincode');
+      const phoneInput = document.getElementById('phone');
+      const addressSelect = document.getElementById('addressSelect');
+      const paymentMethod = document.getElementById('paymentMethod');
+      const checkoutForm = document.getElementById('checkoutForm');
+      const paypalContainer = document.getElementById('paypal-container');
+
+      function populateAddress(index) {
+        const addr = addresses[index];
+        streetInput.value = addr.street || '';
+        cityInput.value = addr.city || '';
+        districtInput.value = addr.district || '';
+        stateInput.value = addr.state || '';
+        pincodeInput.value = addr.pincode || '';
+        phoneInput.value = addr.phone || '';
+      }
+
+      populateAddress(addressSelect.value);
+      addressSelect.addEventListener('change', (e) => populateAddress(e.target.value));
+
+      paymentMethod.addEventListener('change', function () {
+        if (this.value === 'stripe') {
+          checkoutForm.action = '/create-stripe-session';
+        } else { 
+          checkoutForm.action = '/order-summary';
+        }
+      });
+    </script>
+
+    <%- include("partials/msgFlash") %>
+</body>
+
+</html>

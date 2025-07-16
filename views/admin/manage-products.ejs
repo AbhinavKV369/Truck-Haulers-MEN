@@ -1,0 +1,73 @@
+<%- include("partials/head") %>
+
+    <body>
+
+        <%- include("partials/navbar") %>
+
+            <div class="container my-4">
+                <h2>Manage Products</h2>
+                <a href="/admin/add-products" class="btn btn-primary mb-3">Add New Product</a>
+
+                <table class="table table-bordered border-2 border-dark fw-bold">
+                    <thead>
+                        <tr class="bg-black text-light">
+                            <th>ID</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% products.forEach(product=> { %>
+                            <tr>
+                                <td>
+                                    <%= product.id %>
+                                </td>
+                                <td>
+                                    <%= product.name %>
+                                </td>
+                                <td>
+                                    <%= product.category %>
+                                </td>
+                                <td class="d-flex gap-2">
+                                    <form action="/admin/edit-product/<%= product.id %>" method="get">
+                                        <button type="submit" class="btn btn-primary">Edit</button>
+                                    </form>
+                                    <form action="/admin/delete-product/<%= product.id %>" method="post"
+                                        class="delete-product-form">
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+
+            <%- include("partials/scripts") %>
+
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script>
+                    document.querySelectorAll('.delete-product-form').forEach(form => {
+                        form.addEventListener('submit', function (e) {
+                            e.preventDefault();
+                            Swal.fire({
+                                title: 'Are you sure?',
+                                text: "This product will be permanently deleted!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#d33',
+                                cancelButtonColor: '#3085d6',
+                                confirmButtonText: 'Yes, delete it!',
+                                cancelButtonText: 'Cancel'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    form.submit();
+                                }
+                            });
+                        });
+                    });
+                </script>
+    </body>
+
+    </html>

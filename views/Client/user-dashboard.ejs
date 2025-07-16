@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Truck Haulers | User Dashboard</title>
+  <%- include("partials/head") %>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<%- include("partials/style") %>
+
+  <body>
+
+    <section class="py-5">
+      <div class="container">
+        <h2 class="text-center mb-5 fw-bold" style="color:#003366;">User Dashboard</h2>
+
+        <div class="row g-4 row-cols-1 row-cols-sm-2 row-cols-lg-3">
+
+          <!-- Orders -->
+          <div class="col">
+            <div class="card dashboard-card text-center p-4">
+              <div class="card-body">
+                <i class="fas fa-shopping-bag fa-3x mb-3 dashboard-icon"></i>
+                <h5 class="card-title fw-semibold">Orders</h5>
+                <p class="card-text">View and manage your orders.</p>
+                <a href="/my-orders" class="btn custom-primary-btn">View Orders</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cart -->
+          <div class="col">
+            <div class="card dashboard-card text-center p-4">
+              <div class="card-body">
+                <i class="fas fa-shopping-cart fa-3x mb-3 dashboard-icon"></i>
+                <h5 class="card-title fw-semibold">Cart</h5>
+                <p class="card-text">Check out your cart items.</p>
+                <a href="/cart" class="btn custom-primary-btn">Go to Cart</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile -->
+          <div class="col">
+            <div class="card dashboard-card text-center p-4">
+              <div class="card-body">
+                <i class="fas fa-user fa-3x mb-3 dashboard-icon"></i>
+                <h5 class="card-title fw-semibold">Profile</h5>
+                <p class="card-text">Edit your personal information.</p>
+                <a href="/edit-profile" class="btn custom-primary-btn">Edit Profile</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Change Password -->
+          <div class="col">
+            <div class="card dashboard-card text-center p-4">
+              <div class="card-body">
+                <i class="fas fa-key fa-3x mb-3 dashboard-icon"></i>
+                <h5 class="card-title fw-semibold">Change Password</h5>
+                <p class="card-text">Change your password.</p>
+                <a href="/change-password" class="btn custom-primary-btn">Change Password</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delete Account -->
+          <div class="col">
+            <div class="card dashboard-card text-center p-4">
+              <div class="card-body">
+                <i class="fas fa-trash-alt fa-3x mb-3 dashboard-icon"></i>
+                <h5 class="card-title fw-semibold">Delete Account</h5>
+                <p class="card-text">Delete your account permanently.</p>
+                <button type="button" class="btn btn-danger fw-bold" onclick="confirmDelete()">Delete Account</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Logout -->
+          <div class="col">
+            <div class="card dashboard-card text-center p-4">
+              <div class="card-body">
+                <i class="fas fa-sign-out-alt fa-3x mb-3 dashboard-icon"></i>
+                <h5 class="card-title fw-semibold">Logout</h5>
+                <p class="card-text">Sign out of your account.</p>
+                <button class="btn btn-dark fw-bold" onclick="confirmLogout()">Logout</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SweetAlert JS functions -->
+    <script>
+      function confirmDelete() {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "This will permanently delete your account!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/delete-account';
+            document.body.appendChild(form);
+            form.submit();
+          }
+        });
+      }
+
+      function confirmLogout() {
+        Swal.fire({
+          title: 'Logout?',
+          text: "Are you sure you want to logout?",
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#003366',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Yes, logout'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/logout';
+          }
+        });
+      }
+    </script>
+      <%- include("partials/msgFlash") %>
+
+  </body>
+
+</html>

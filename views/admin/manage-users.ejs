@@ -1,0 +1,90 @@
+<%- include("partials/head") %>
+
+    <body>
+        <%- include("partials/navbar") %>
+
+            <div class="container mt-5">
+                <h1 class="text-center">User Management</h1>
+
+                <div class="mb-4">
+                    <form action="/admin/search-users" method="post">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="search" placeholder="Search by name or email"
+                                required>
+                            <button class="btn btn-primary" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+
+                <h2>Users</h2>
+                <table class="table table-bordered border-dark border-2">
+                    <thead class="bg-black text-white">
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (users.length===0) { %>
+                            <tr>
+                                <td colspan="3" class="text-center text-danger fw-bold">No users found.</td>
+                            </tr>
+                            <% } else { %>
+                                <% users.forEach(user=> { %>
+                                    <tr>
+                                        <td>
+                                            <%= user.name %>
+                                        </td>
+                                        <td>
+                                            <%= user.email %>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/edit-user/<%= user.id %>"
+                                                class="btn btn-warning btn-sm">Edit</a>
+                                            <button
+                                                class="btn btn-sm status-btn <%= user.isBlocked ? 'btn-danger' : 'btn-success' %>"
+                                                data-id="<%= user.id %>">
+                                                <%= user.isBlocked ? 'Unblock' : 'Block' %>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <%- include("partials/scripts") %>
+
+            <script>
+                document.querySelectorAll('.status-btn').forEach(button => {
+                    button.addEventListener('click', async () => {
+                        const userId = button.dataset.id;
+
+                        try {
+                            const res = await fetch(`/admin/toggle-user-status/${userId}`, {
+                                method: 'POST',
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                            });
+
+                            const data = await res.json();
+                            if (data.success) {
+                                const isBlocked = data.newStatus;
+                                button.textContent = isBlocked ? 'Unblock' : 'Block';
+                                button.classList.toggle('btn-danger', isBlocked);
+                                button.classList.toggle('btn-success', !isBlocked);
+                            } else {
+                                alert('Failed to update status.');
+                            }
+                        } catch (err) {
+                            alert('Server error occurred.');
+                            console.error(err);
+                        }
+                    });
+                });
+            </script>
+            
+    </body>
+
+    </html>

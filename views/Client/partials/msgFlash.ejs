@@ -1,0 +1,28 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+<!-- Embed messages as data attributes on a hidden div -->
+<div id="notyf-messages" 
+     data-success='<%= JSON.stringify(messages.success || "") %>' 
+     data-error='<%= JSON.stringify(messages.error || "") %>' 
+     style="display:none;"></div>
+
+<script>
+  const notyf = new Notyf({
+    duration: 3000,
+    position: { x: 'right', y: 'top' }
+  });
+
+  // Read messages from DOM
+  const msgEl = document.getElementById('notyf-messages');
+  const successMsg = msgEl.getAttribute('data-success');
+  const errorMsg = msgEl.getAttribute('data-error');
+
+  if (successMsg && successMsg !== '""') {
+    notyf.success(JSON.parse(successMsg));
+  }
+
+  if (errorMsg && errorMsg !== '""') {
+    notyf.error(JSON.parse(errorMsg));
+  }
+</script>

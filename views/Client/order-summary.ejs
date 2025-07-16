@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Truck Haulers Order Summary</title>
+    <%- include("partials/head") %>
+</head>
+
+<body>
+    <%- include("partials/preLoader") %>
+
+        <div class="container py-5">
+            <div class="bg-white p-4 rounded shadow" style="max-width: 1000px; margin: auto;">
+
+                <h2 class="text-center mb-4 text-success">
+                    <i class="fas fa-check-circle me-2"></i>Order Placed Successfully
+                </h2>
+
+                <div class="row mb-2">
+                    <div class="col-md-8">
+                        <h4 class="mb-3">Order Details</h4>
+                        <div class="list-group">
+                            <% items.forEach(item=> { %>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5 style="margin-bottom: 5px;">
+                                            <%= item.product.name || item.product.name || "Product" %>
+                                        </h5>
+                                        <p class="mb-0">Quantity: <%= item.quantity %>
+                                        </p>
+                                    </div>
+                                    <span class="badge bg-primary p-2" style="font-size: 16px;">
+                                        Rs. <%= ((item.product.price || item.product.price || 0) * item.quantity *
+                                            1.3).toFixed(2) %>
+                                    </span>
+                                </div>
+                                <% }) %>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <h5 class="card-title">Summary</h5>
+                        <ul class="list-unstyled" style="font-size: 16px;">
+                            <li class="d-flex justify-content-between">
+                                <span>Subtotal</span>
+                                <span>Rs. <%= price.subtotal %></span>
+                            </li>
+
+                            <li class="d-flex justify-content-between">
+                                <span>Tax (30%)</span>
+                                <span>Rs. <%= price.tax %></span>
+                            </li>
+
+                            <% if (coupon) { %>
+                                <li class="d-flex justify-content-between text-success">
+                                    <span>Coupon (<%= coupon.code %>)</span>
+                                    <span>- Rs. <%= price.discount %></span>
+                                </li>
+                                <% } %>
+
+                                    <li class="d-flex justify-content-between">
+                                        <span>Shipping</span>
+                                        <span>Free</span>
+                                    </li>
+
+                                    <hr />
+                                    <li class="d-flex justify-content-between fw-bold">
+                                        <strong>Total</strong>
+                                        <strong>Rs. <%= price.total %></strong>
+                                    </li>
+                        </ul>
+
+                        <h4 class="mt-4">Shipping Information</h4>
+                        <p><strong>Recipient:</strong>
+                            <%= user.name %>
+                        </p>
+                        <p>
+                            <strong>Address:</strong>
+                            <%= address?.street %>, <%= address?.city %>, <%= address?.district %>,
+                                        <%= address?.state %>, <%= address?.pincode %>
+                        </p>
+                        <p><strong>Estimated Delivery:</strong>
+                            <%= new Date(Date.now() + 3 * 86400000).toDateString() %>
+                        </p>
+                    </div>
+                </div>
+
+                <h4 class="alert alert-success p-3 mt-4 text-center">
+                    Thanks for trusting us - Truck Haulers
+                </h4>
+
+                <div class="text-center">
+                    <a href="/my-orders" class="btn btn-success px-4 py-2">Back to Orders</a>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

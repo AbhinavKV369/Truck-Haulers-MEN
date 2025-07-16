@@ -1,0 +1,112 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-gradient shadow-sm p-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold"
+            style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333;" href="/">
+            <span class="text-primary">TRUCK</span> HAULERS
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto fw-bold">
+
+                <!-- Home & Products -->
+                <li class="nav-item me-3">
+                    <a class="nav-link text-dark hover-underline-animation" href="/">Home</a>
+                </li>
+                <li class="nav-item me-3">
+                    <a class="nav-link text-dark hover-underline-animation" href="/products">Products</a>
+                </li>
+
+                <!-- Categories Dropdown -->
+                <li class="nav-item me-3 dropdown">
+                    <a class="nav-link dropdown-toggle text-dark hover-underline-animation" href="#" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Categories
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow-lg">
+                        <li><a class="dropdown-item text-dark" href="/buses">Buses</a></li>
+                        <li><a class="dropdown-item text-dark" href="/trucks">Trucks</a></li>
+                        <li><a class="dropdown-item text-dark" href="/light-vehicles">Light Vehicles</a></li>
+                        <li><a class="dropdown-item text-dark" href="/medium-vehicles">Medium Vehicles</a></li>
+                    </ul>
+                </li>
+
+                <!-- Info Dropdown -->
+                <li class="nav-item me-3 dropdown">
+                    <a class="nav-link dropdown-toggle text-dark hover-underline-animation" href="#" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Info
+                    </a>
+                    <ul class="dropdown-menu border-0 shadow-lg">
+                        <li><a class="dropdown-item text-dark" href="/about">About Us</a></li>
+                        <li><a class="dropdown-item text-dark" href="/contact">Contact Us</a></li>
+                        <li><a class="dropdown-item text-dark" href="/services">Services</a></li>
+                    </ul>
+                </li>
+
+                <!-- Offers -->
+                <li class="nav-item me-3">
+                    <a class="nav-link position-relative text-dark hover-underline-animation" href="/coupons">
+                        <i class="fas fa-tag me-1"></i> Offers
+                    </a>
+                </li>
+
+                <!-- Authenticated Users -->
+                <% if (user) { %>
+                    <li class="nav-item me-3">
+                        <a class="nav-link text-dark hover-underline-animation" href="/user-dashboard">
+                            <i class="fas fa-user"></i> Hub
+                        </a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a class="nav-link text-dark hover-underline-animation" href="/logout">Logout</a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a class="nav-link position-relative text-dark hover-underline-animation" href="/wishlist"
+                            aria-label="Wishlist">
+                            ❤️
+                        </a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a class="nav-link position-relative text-dark hover-underline-animation" href="/cart"
+                            aria-label="Cart">
+                            🛒 Cart
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger text-white">
+                                <%= cartCount || 0 %>
+                            </span>
+                        </a>
+                    </li>
+                    <% } else { %>
+
+                        <!-- Guest Users -->
+                        <li class="nav-item me-3">
+                            <a class="nav-link text-dark hover-underline-animation" href="/login">Login</a>
+                        </li>
+                        <li class="nav-item me-3">
+                            <a class="nav-link position-relative text-dark hover-underline-animation" href="/wishlist"
+                                aria-label="Wishlist">
+                                ❤️
+                              
+                            </a>
+                        </li>
+                        <li class="nav-item me-3">
+                            <a class="nav-link position-relative text-dark hover-underline-animation" href="/cart"
+                                aria-label="Cart">
+                                🛒 Cart
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger text-white">
+                                    <%= cartCount || 0 %>
+                                </span>
+                            </a>
+                        </li>
+                        <% } %>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+  

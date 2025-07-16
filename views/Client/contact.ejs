@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Truck Haulers Contact</title>
+  <%- include("partials/head") %>
+
+  <!-- SweetAlert2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+  <%- include("partials/preLoader") %>
+  <%- include("partials/navbar") %>
+
+  <section class="container my-5">
+    <h1 class="text-center mb-4">Contact Us</h1>
+
+    <div class="row">
+      <div class="col-md-6">
+        <p>If you have any questions or inquiries, please feel free to reach out to us using the
+          information
+          below:</p>
+        <ul>
+          <li><strong>Corporate Office:</strong> Truck Haulers Ltd, Kannur, Kerala, India</li>
+          <li><strong>Phone:</strong> +91 44 2222 3333</li>
+          <li><strong>Email:</strong> <a href="mailto:info@Truck Haulers.com">info@Truck
+              Haulers.com</a></li>
+          <li><strong>Fax:</strong> +91 44 2222 3344</li>
+        </ul>
+      </div>
+
+      <div class="col-md-6">
+        <h2>Our Commitment to Quality</h2>
+        <p>Truck Haulers is committed to providing world-class vehicles and services that meet the
+          highest
+          standards of quality, performance, and reliability. Our engineering expertise and innovative
+          solutions ensure that we are at the forefront of the automotive industry, delivering
+          vehicles
+          that exceed customer expectations.</p>
+
+        <h2>Global Presence</h2>
+        <p>With a strong global presence, Truck Haulers has established a reputation for providing
+          exceptional
+          transportation solutions across more than 50 countries. Our network of dealers, service
+          centers,
+          and
+          manufacturing plants ensures that our customers receive support wherever they are located.
+        </p>
+
+        <h2>Customer Satisfaction</h2>
+        <p>At Truck Haulers, customer satisfaction is at the core of everything we do. We strive to
+          build
+          long-lasting relationships with our clients by offering the best products and after-sales
+          support.
+          Our customer service team is always ready to assist with any inquiries or concerns you may
+          have.
+        </p>
+      </div>
+    </div>
+
+    <!-- Image Section -->
+    <div class="text-center mt-5">
+      <h2>Our Fleet</h2>
+      <p>Take a look at some of the advanced vehicles we offer. We take pride in designing and
+        manufacturing
+        vehicles that are not only powerful but also safe and reliable for our customers.</p>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="card contact-form mt-5 py-4 px-4" style="background: #f8f9fa; color:black">
+      <h2 class="mb-3">Send Us a Message</h2>
+      <form id="contactForm" action="/submit-message" method="POST">
+        <div class="mb-3">
+          <label for="name" class="form-label">Your Name:</label>
+          <input type="text" class="form-control border-primary" id="name" name="name" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Your Email:</label>
+          <input type="email" class="form-control border-primary" id="email" name="email" />
+        </div>
+
+        <div class="mb-3">
+          <label for="subject" class="form-label">Subject:</label>
+          <input type="text" class="form-control border-primary" id="subject" name="subject" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="message" class="form-label">Message:</label>
+          <textarea class="form-control border-primary" id="message" name="message" rows="4" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="background-color: #003366;">Submit</button>
+      </form>
+    </div>
+
+    <!-- Map Section (Optional) -->
+    <div class="my-3 container-fluid">
+      <h2 class="p-2">Our Location</h2>
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3904.43477338131!2d75.37587895000001!3d11.87478425!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba43d3201e08ad9%3A0xf7a1d2cf129c6d76!2sCaltex%2C%20Kannur%2C%20Kerala!5e0!3m2!1sen!2sin!4v1743501669326!5m2!1sen!2sin"
+        width="100%" height="450" style="border:2px rgb(5, 5, 105) solid;" allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </section>
+
+  <%- include("partials/scrollUp") %>
+  <%- include("partials/footer") %>
+  <%- include("partials/scripts") %>
+
+ 
+
+    <%- include("partials/msgFlash") %>
+</body>
+
+</html>

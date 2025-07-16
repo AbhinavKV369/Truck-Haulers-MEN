@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/head") %>
+<%- include("partials/authScript") %>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha512-pap6Z1JmU4z8kWdV5wRXK2TrdU4cHbTcyEnr8h8Y8gBft9cFZ2pLlGv2T/LoHIX1HQxZ4ZfJoxzYFVmTzVepZQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <body style="background: linear-gradient(to right, #e8e8e9, #f5f7fa);">
+
+        <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+            <div class="card p-4 shadow-lg border-0 rounded-4" style="width: 400px; background: #ffffff;">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-shield fa-3x text-primary mb-3"></i>
+                    <h3 class="fw-bold text-dark">Admin Login</h3>
+                    <p class="text-muted small">Access your dashboard securely</p>
+                </div>
+
+                <!-- Show login message if any -->
+                <% if (message) { %>
+                    <div class="alert alert-danger text-center py-2 mb-3">
+                        <%= message %>
+                    </div>
+                    <% } %>
+
+                        <form action="/admin/login" method="POST">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Email</label>
+                                <input type="email" class="form-control rounded-3 border border-primary-subtle"
+                                    name="email" required autofocus>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Password</label>
+                                <input type="password" class="form-control rounded-3 border border-primary-subtle"
+                                    name="password" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary rounded-3 fw-semibold">Login</button>
+                            </div>
+                        </form>
+
+                        <div class="text-center mt-3">
+                            <small class="text-muted">Only authorized personnel allowed</small>
+                        </div>
+            </div>
+        </div>
+
+        <%- include("partials/scripts") %>
+    </body>
+
+</html>

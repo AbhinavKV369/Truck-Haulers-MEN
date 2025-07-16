@@ -1,0 +1,41 @@
+<nav class="navbar navbar-expand-lg navbar-light p-4" style="background-color: #ffffff">
+    <div class="container">
+        <a class="navbar-brand fw-bold"
+            style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;"
+            href="/admin">TRUCK HAULERS</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto fw-bold">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin">Admin Panel</a>
+                </li>
+
+                <!-- Manage Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle active" href="#" id="manageDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Manage
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="manageDropdown">
+                        <li><a class="dropdown-item" href="/admin/manage-users">Manage Users</a></li>
+                        <li><a class="dropdown-item" href="/admin/add-products">Add Products</a></li>
+                        <li><a class="dropdown-item" href="/admin/manage-products">Manage Products</a></li>
+                        <li><a class="dropdown-item" href="/admin/manage-orders">Manage Orders</a></li>
+                        <li><a class="dropdown-item" href="/admin/add-banner">Add Banner</a></li>
+                        <li><a class="dropdown-item" href="/admin/manage-coupons">Manage Coupons</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin/user-messages">User Messages</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

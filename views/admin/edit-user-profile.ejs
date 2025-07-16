@@ -1,0 +1,38 @@
+<%- include("partials/head") %>
+
+<body>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header text-center">
+            <h4>Edit User Profile</h4>
+          </div>
+          <div class="card-body">
+            <% if (message) { %>
+            <div class="alert alert-success" role="alert">
+              <%= message %>
+            </div>
+            <% } %>
+            <form method="POST" action="/admin/update-profile/<%= user.id %>">
+              <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required>
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
+              </div>
+              <div class="mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="text" class="form-control" id="phone" name="phone" value="<%= user.phone %>" required>
+              </div>
+              <button type="submit" class="btn w-100 text-white fw-bold" style="background: #003366;">Update Profile</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

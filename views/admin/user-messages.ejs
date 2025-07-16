@@ -1,0 +1,167 @@
+<%- include("partials/head") %>
+
+  <body>
+    <%- include("partials/navbar") %>
+
+      <div class="container mt-5">
+        <h2 class="text-center mb-4">Admin Panel - User Messages</h2>
+
+        <!-- Search Form -->
+        <div class="mb-4">
+          <form action="/admin/search-messages" method="post">
+            <div class="input-group">
+              <input type="text" class="form-control" name="search" placeholder="Search by subject or sender"
+                aria-label="Search">
+              <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Messages -->
+        <div class="row">
+          <% if(messages.length> 0) { %>
+            <% messages.forEach((message, index)=> { %>
+              <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                <div class="card h-100 shadow-sm">
+                  <div class="card-header">
+                    <h5 class="card-title mb-0">
+                      <%= message.email %>
+                    </h5>
+                  </div>
+                  <div class="card-body d-flex flex-column">
+                    <h6><strong>Subject:</strong>
+                      <%= message.subject %>
+                    </h6>
+                    <p class="mb-1"><strong>Message:</strong>
+                      <%= message.message %>
+                    </p>
+                    <p class="mb-3"><strong>Date:</strong>
+                      <%= message.date %>
+                    </p>
+
+                    <form action="/admin/delete-message/<%= message._id %>" method="post"
+                      class="delete-message-form mt-auto">
+                      <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                          data-bs-target="#replyModal-<%= index %>" data-bs-whatever="<%= message.email %>">
+                          Reply to <%= message.name %>
+                        </button>
+                      </div>
+                    </form>
+
+                    <!-- Reply Modal -->
+                    <div class="modal fade" id="replyModal-<%= index %>" tabindex="-1"
+                      aria-labelledby="modalLabel-<%= index %>" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="modalLabel-<%= index %>">New message</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <form method="post" action="/admin/reply-to-user">
+                              <div class="modal-body">
+                                <div class="mb-3">
+                                  <label for="recipient-name-<%= index %>" class="col-form-label">Recipient:</label>
+                                  <input type="email" name="email" class="form-control" id="recipient-name-<%= index %>"
+                                    required>
+                                </div>
+                                <div class="mb-3">
+                                  <label for="message-text-<%= index %>" class="col-form-label">Message:</label>
+                                  <textarea name="message" class="form-control" id="message-text-<%= index %>"
+                                    required>This is a official message from Truck Haulers Admin,</textarea>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary send-reply-btn">Send message</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% }) %>
+                <% } else { %>
+                  <div class="col-12">
+                    <p class="alert alert-warning text-center">No messages to show</p>
+                  </div>
+                  <% } %>
+        </div>
+      </div>
+
+      <%- include("partials/scripts") %>
+
+        <script>
+          // Confirm before delete
+          document.querySelectorAll(".delete-message-form").forEach(form => {
+            form.addEventListener("submit", function (e) {
+              e.preventDefault();
+              Swal.fire({
+                title: 'Are you sure?',
+                text: "This message will be permanently deleted!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  form.submit();
+                }
+              });
+            });
+          });
+
+          // Autofill email in reply modal
+          document.querySelectorAll(".modal").forEach(modal => {
+            modal.addEventListener('show.bs.modal', event => {
+              const button = event.relatedTarget;
+              const recipient = button.getAttribute('data-bs-whatever');
+              const modalTitle = modal.querySelector('.modal-title');
+              const modalBodyInput = modal.querySelector('input');
+
+              modalTitle.textContent = `Reply message to ${recipient}`;
+              modalBodyInput.value = recipient;
+            });
+          });
+
+          // Confirm before sending reply
+          document.querySelectorAll(".send-reply-btn").forEach(button => {
+            button.addEventListener("click", function () {
+              const form = button.closest("form");
+              Swal.fire({
+                title: 'Send this message?',
+                text: "It will be sent to the user immediately!",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, send it!',
+                cancelButtonText: 'Cancel'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  form.submit();
+                }
+              });
+            });
+          });
+        </script>
+
+        <% if (typeof reply !=='undefined' && reply==='success' ) { %>
+          <script>
+            Swal.fire({
+              icon: 'success',
+              title: 'Message sent!',
+              text: 'Your reply was successfully delivered.',
+              timer: 2000,
+              showConfirmButton: false
+            });
+          </script>
+          <% } %>
+  </body>
+
+  </html>

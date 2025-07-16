@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("partials/head") %>
+        <title>Add Address</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <%- include("partials/navbar") %>
+
+        <main class="flex-grow-1 ">
+            <div class="container py-5">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-10 col-lg-8">
+                        <div class="bg-white p-4 p-md-5 shadow rounded-4 mb-4">
+                            <h2 class="mb-4 text-center">Add New Address</h2>
+
+                            <form action="/add-address" method="POST">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="street" name="addresses[street]"
+                                        placeholder="Street" required>
+                                    <label for="street">Street</label>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="city" name="addresses[city]"
+                                        placeholder="City" required>
+                                    <label for="city">City</label>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="district" name="addresses[district]"
+                                        placeholder="District" required>
+                                    <label for="district">District</label>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="state" name="addresses[state]"
+                                        placeholder="State" required>
+                                    <label for="state">State</label>
+                                </div>
+
+                                <div class="form-floating mb-4">
+                                    <input type="text" class="form-control" id="pincode" name="addresses[pincode]"
+                                        placeholder="Pincode" required pattern="\d{6}" title="Enter 6-digit pincode">
+                                    <label for="pincode">Pincode</label>
+                                </div>
+
+                                <div class="form-floating mb-4">
+                                    <input type="text" class="form-control" id="phone" name="addresses[phone]" placeholder="Pincode" required
+                                        pattern="\d{10}" title="Enter 10-digit phone number">
+                                    <label for="phone">Phone</label>
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <a href="/edit-profile"
+                                        class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                                    <button type="submit" class="btn btn-success rounded-pill px-4">Save
+                                        Address</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <% if (addresses && addresses.length> 0) { %>
+                            <div class="bg-white p-4 shadow rounded-4">
+                                <h4 class="mb-3">Your Addresses</h4>
+                                <ul class="list-group">
+                                    <% addresses.forEach((address, index)=> { %>
+                                        <li class="list-group-item">
+                                            <strong>Address <%= index + 1 %>:</strong><br>
+                                            <%= address.street %>, <%= address.city %>, <%= address.district %>,
+                                                        <%= address.state %> - <%= address.pincode %>
+                                        </li>
+                                        <% }) %>
+                                </ul>
+                            </div>
+                            <% } else { %>
+                                <div class="bg-white p-4 shadow rounded-4 text-center">
+                                    <p class="text-muted mb-0">No addresses found.</p>
+                                </div>
+                                <% } %>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-auto">
+            <%- include("partials/footer") %>
+            
+        </footer>
+
+        <%- include("partials/scrollUp") %>
+            <%- include("partials/scripts") %>
+            <%- include("partials/msgFlash") %>
+</body>
+
+</html>

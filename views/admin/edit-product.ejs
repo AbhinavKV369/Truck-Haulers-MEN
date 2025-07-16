@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<%- include("partials/head") %>
+
+    <body style="color: black;">
+        <%- include("partials/navbar") %>
+
+            <div class="container my-4">
+                <h1 class="text-center">Admin Panel - Edit Product</h1>
+
+                <% if(message){ %>
+                    <p class="bg-success text-white alert">
+                        <%= message %>
+                    </p>
+                    <% } %>
+
+                        <form action="/admin/edit-product/<%= product._id %>" method="POST"
+                            enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Product Name</label>
+                                <input type="text" class="form-control border-primary" id="name" name="name"
+                                    value="<%= product.name %>" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control border-primary" id="description" name="description"
+                                    required><%= product.description %></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="engine" class="form-label">Engine</label>
+                                <input class="form-control border-primary" id="engine" name="engine"
+                                    value="<%= product.engine %>" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="gvw" class="form-label">GVW</label>
+                                <input class="form-control border-primary" id="gvw" name="gvw"
+                                    value="<%= product.gvw %>" required>
+                            </div>
+
+                            <!-- Show existing images -->
+                            <div class="mb-3">
+                                <label>Current Images:</label>
+                                <div>
+                                    <% if (product.productImages && product.productImages.length> 0) { %>
+                                        <% product.productImages.forEach(img=> { %>
+                                            <img src="<%= img %>" style="width: 100px; margin-right: 10px;">
+                                            <% }); %>
+                                                <% } else { %>
+                                                    <p>No images available</p>
+                                                    <% } %>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="productImage" class="form-label">Add/Replace Images</label>
+                                <input type="file" class="form-control border-primary" id="productImage"
+                                    name="productImage[]" multiple>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Price</label>
+                                <input type="number" class="form-control border-primary" id="price" name="price"
+                                    value="<%= product.price %>" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Category</label>
+                                <select class="form-select border-primary" id="category" name="category" required>
+                                    <option value="truck" <%=product.category==='truck' ? 'selected' : '' %>>Truck
+                                    </option>
+                                    <option value="bus" <%=product.category==='bus' ? 'selected' : '' %>>Bus</option>
+                                    <option value="lmv" <%=product.category==='lmv' ? 'selected' : '' %>>Light Vehicle
+                                    </option>
+                                    <option value="mmv" <%=product.category==='mmv' ? 'selected' : '' %>>Medium Vehicle
+                                    </option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn mb-3 text-white" style="background: #106ec6;">Update
+                                Product</button>
+                        </form>
+            </div>
+
+            <%- include("partials/scripts") %>
+    </body>
+
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Your Wishlist</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include("partials/head") %>
+
+        <style>
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            main {
+                flex-grow: 1;
+            }
+        </style>
+</head>
+<%- include("partials/style") %>
+
+    <body>
+        <%- include("partials/navbar") %>
+            <%- include("partials/preLoader") %>
+
+                <main class="container py-5">
+                    <h2 class="text-center mb-4">My Wishlist</h2>
+
+                    <% if (wishlist && wishlist.items && wishlist.items.length> 0) { %>
+                        <div class="list-group">
+                            <% wishlist.items.forEach(item=> { %>
+                                <% if (item.product) { %>
+                                    <div
+                                        class="list-group-item d-flex align-items-center justify-content-between flex-wrap py-3">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <img src="<%= item.product.productImages[0] %>"
+                                                alt="<%= item.product.name %>" width="100" height="100"
+                                                style="object-fit: contain;">
+                                            <div>
+                                                <h5 class="mb-1">
+                                                    <%= item.product.name %>
+                                                </h5>
+                                                <small class="text-muted d-block mb-1">
+                                                    <%= item.product.description %>...
+                                                </small>
+                                                <strong class="text-success">₹ <%= item.product.price.toLocaleString()
+                                                        %></strong>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-2 mt-2 mt-sm-0">
+                                            <form action="/add-cart" method="post">
+                                                <input type="hidden" name="product" value="<%= item.product._id %>">
+                                                <button class="btn btn-outline-primary btn-sm">Add to Cart</button>
+                                            </form>
+                                            <form action="/wishlist/toggle" method="post">
+                                                <input type="hidden" name="product" value="<%= item.product._id %>">
+                                                <button class="btn bg-danger btn-sm">Remove</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <% } else { %>
+                                        <div
+                                            class="list-group-item d-flex justify-content-between align-items-center py-3 bg-light">
+                                            <div class="text-danger">This product is no longer available.</div>
+                                            <form action="/wishlist/toggle" method="post">
+                                                <input type="hidden" name="product" value="<%= item.product.id %>">
+                                                <button class="btn btn-danger btn-sm">Remove</button>
+                                            </form>
+                                        </div>
+                                        <% } %>
+                                            <% }); %>
+                        </div>
+                        <% } else { %>
+                            <div class="text-center mt-5">
+                                <p class="lead">Your wishlist is empty.</p>
+                                <a href="/products" class="btn btn-primary">Browse Products</a>
+                            </div>
+                            <% } %>
+                </main>
+
+                <%- include("partials/scrollUp") %>
+                    <%- include("partials/footer") %>
+                        <%- include("partials/scripts") %>
+    </body>
+
+</html>
