@@ -6,20 +6,20 @@ const Product = require("../models/product");
 const Order = require("../models/order");
 const Banner = require("../models/banner");
 const Message = require("../models/message");
-const Coupon = require("../models/coupon")
+const Coupon = require("../models/coupon");
 const Cart = require("../models/cart");
 const Wishlist = require("../models/wishlist");
-const { sendMessage } = require("../services/nodeMailer")
+const { sendMessage } = require("../services/nodeMailer");
 
 async function createDefaultAdmin() {
   try {
     const existingAdmin = await User.findOne({ name: process.env.ADMIN_NAME });
 
     if (!existingAdmin) {
-      const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD,10); 
+      const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
       const admin = new User({
-        name:  process.env.ADMIN_NAME ,
-        phone: 1234567890, 
+        name: process.env.ADMIN_NAME,
+        phone: 1234567890,
         email: "admin@truckhaulers.com",
         password: hashedPassword,
         isVerified: true,
@@ -36,10 +36,10 @@ async function createDefaultAdmin() {
   }
 }
 
-async function handleGetAdminLogin(req,res) {
-  res.render("admin/admin-login",{
-    message: null
-  })
+async function handleGetAdminLogin(req, res) {
+  res.render("admin/admin-login", {
+    message: null,
+  });
 }
 
 async function handlePostAdminLogin(req, res) {
@@ -48,44 +48,55 @@ async function handlePostAdminLogin(req, res) {
   try {
     const admin = await User.findOne({ email, role: "admin" });
     if (!admin) {
-      return res.status(401).render("admin/admin-login", { message: "Invalid credential" });
+      return res
+        .status(401)
+        .render("admin/admin-login", { message: "Invalid credential" });
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
-      return res.status(401).render("admin/admin-login", { message: "Invalid credentials" });
+      return res
+        .status(401)
+        .render("admin/admin-login", { message: "Invalid credentials" });
     }
-    const payload = {admin:{
-      id: admin._id, 
-      role: admin.role
-    }}
+    const payload = {
+      admin: {
+        id: admin._id,
+        role: admin.role,
+      },
+    };
 
-    const token = jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
 
-    res.cookie("adminToken", token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
+    res.cookie("adminToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     res.redirect("/admin");
   } catch (error) {
     console.error("Admin login error:", error);
-    res.status(500).render("admin/admin-login", { message: "Something went wrong" });
+    res
+      .status(500)
+      .render("admin/admin-login", { message: "Something went wrong" });
   }
 }
 
-async function  handleGetAdminPanel(req, res){
+async function handleGetAdminPanel(req, res) {
   try {
     const [totalProducts, totalUsers, totalOrders] = await Promise.all([
       Product.countDocuments(),
       User.countDocuments(),
-      Order.countDocuments()
+      Order.countDocuments(),
     ]);
 
     const revenueAgg = await Order.aggregate([
       { $match: { status: "delivered" } },
-      { $group: { _id: null, total: { $sum: "$totalAmount" } } }
+      { $group: { _id: null, total: { $sum: "$totalAmount" } } },
     ]);
 
     const totalRevenue = revenueAgg.length > 0 ? revenueAgg[0].total : 0;
@@ -93,7 +104,7 @@ async function  handleGetAdminPanel(req, res){
     const [latestUser, latestProduct, latestOrder] = await Promise.all([
       User.findOne().sort({ createdAt: -1 }),
       Product.findOne().sort({ createdAt: -1 }),
-      Order.findOne().sort({ createdAt: -1 }).populate("user")
+      Order.findOne().sort({ createdAt: -1 }).populate("user"),
     ]);
 
     const orders = await Order.find();
@@ -105,8 +116,8 @@ async function  handleGetAdminPanel(req, res){
       {
         $group: {
           _id: "$items.product",
-          totalOrdered: { $sum: "$items.quantity" }
-        }
+          totalOrdered: { $sum: "$items.quantity" },
+        },
       },
       { $sort: { totalOrdered: -1 } },
       { $limit: 5 },
@@ -115,16 +126,16 @@ async function  handleGetAdminPanel(req, res){
           from: "products",
           localField: "_id",
           foreignField: "_id",
-          as: "productDetails"
-        }
+          as: "productDetails",
+        },
       },
       { $unwind: "$productDetails" },
       {
         $project: {
           name: "$productDetails.name",
-          totalOrdered: 1
-        }
-      } 
+          totalOrdered: 1,
+        },
+      },
     ]);
 
     res.render("admin/admin-panel", {
@@ -137,16 +148,15 @@ async function  handleGetAdminPanel(req, res){
       latestOrder,
       latestShipped,
       orders,
-      trendingProducts
+      trendingProducts,
     });
-
   } catch (error) {
     console.error("Admin Panel Error:", error.message);
     res.status(500).render("server-error", {
       message: "Internal Server Error",
     });
   }
-};
+}
 
 async function handleGetUsers(req, res) {
   const users = await User.find({});
@@ -181,13 +191,17 @@ async function handleUserStatus(req, res) {
     const user = await User.findById(req.params.id);
     const newStatus = !user.isBlocked;
 
-    await User.findByIdAndUpdate(req.params.id, { isBlocked: newStatus }, { new: true });
+    await User.findByIdAndUpdate(
+      req.params.id,
+      { isBlocked: newStatus },
+      { new: true }
+    );
 
-    res.json({ success: true, newStatus});
+    res.json({ success: true, newStatus });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 }
@@ -207,7 +221,7 @@ async function handleGetSearchUsers(req, res) {
   } catch (error) {
     res.status(500).render("server-error", {
       message: error.message,
-    }); 
+    });
   }
 }
 
@@ -215,7 +229,7 @@ async function handlePostAddProducts(req, res) {
   const { name, description, price, category, engine, gvw } = req.body;
 
   try {
-    const productImages = req.files.map(file => file.path);
+    const productImages = req.files.map((file) => file.path);
 
     const newProduct = new Product({
       name,
@@ -232,7 +246,6 @@ async function handlePostAddProducts(req, res) {
     res.render("admin/add-products", {
       message: "Product added successfully",
     });
-
   } catch (error) {
     console.error("Error adding product:", error);
     res.status(500).render("admin/server-error", {
@@ -241,37 +254,40 @@ async function handlePostAddProducts(req, res) {
   }
 }
 
-async function handleEditProduct(req,res) {
+async function handleEditProduct(req, res) {
   const productId = req.params.id;
-  try{
+  try {
     const product = await Product.findById(productId);
-    res.render("admin/edit-product",{
+    res.render("admin/edit-product", {
       product,
       message: null,
-    })
-  }catch{
+    });
+  } catch {
     res.status(500).render("admin/server-error", {
       message: error.message,
     });
   }
 }
 
-async function handleUpdateProduct(req,res) {
-  const { name, description, price, category, engine, gvw } = req.body
-  try{
-    const updatedFields = { name, description, price, category, engine, gvw } ;
+async function handleUpdateProduct(req, res) {
+  const { name, description, price, category, engine, gvw } = req.body;
+  try {
+    const updatedFields = { name, description, price, category, engine, gvw };
     if (req.files && req.files.length > 0) {
-      updatedFields.productImages = req.files.map(file => file.path);
+      updatedFields.productImages = req.files.map((file) => file.path);
     }
 
-   const product = await Product.findByIdAndUpdate(req.params.id,updatedFields,{new:true});
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      updatedFields,
+      { new: true }
+    );
 
-    res.render("admin/edit-product",{
+    res.render("admin/edit-product", {
       product,
-      message: "Product updated successfuly"
-    })
-
-  }catch(error){
+      message: "Product updated successfuly",
+    });
+  } catch (error) {
     res.status(500).render("admin/server-error", {
       message: error.message,
     });
@@ -295,14 +311,8 @@ async function handleDeleteProducts(req, res) {
   try {
     const productId = req.params.id;
     await Product.findByIdAndDelete(productId);
-    await Cart.updateMany(
-      {},
-      {$pull:{items:{product:productId}}}
-    )
-    await Wishlist.updateMany(
-      {},
-      {$pull:{items:{product:productId}}}
-    )
+    await Cart.updateMany({}, { $pull: { items: { product: productId } } });
+    await Wishlist.updateMany({}, { $pull: { items: { product: productId } } });
     res.redirect("/admin/manage-products");
   } catch (error) {
     res.status(500).render("server-error", {
@@ -311,16 +321,14 @@ async function handleDeleteProducts(req, res) {
   }
 }
 
-
-
 async function handleGetManageOrders(req, res) {
   const orders = await Order.find({})
-  .populate("user")
-  .populate("items.product");
+    .populate("user")
+    .populate("items.product");
   res.status(200).render("admin/manage-orders", {
     orders,
   });
-};
+}
 
 async function handleOrderStatus(req, res) {
   const { orderStatus } = req.body;
@@ -336,7 +344,7 @@ async function handleOrderStatus(req, res) {
     }
 
     order.status = orderStatus;
-    order.updatedAt = new Date(); 
+    order.updatedAt = new Date();
 
     await order.save();
 
@@ -349,14 +357,16 @@ async function handleOrderStatus(req, res) {
 }
 
 async function handleViewUserOrderDetails(req, res) {
-  const productId = req.params.id
+  const productId = req.params.id;
   try {
-    const order = await Order.findById({_id: productId}) .populate("user").populate("items.product");
+    const order = await Order.findById({ _id: productId })
+      .populate("user")
+      .populate("items.product");
     if (!order) {
-      return res.status(400).send( {
+      return res.status(400).send({
         message: "Order not found",
-      });  
-    } 
+      });
+    }
     res.status(200).render("admin/view-user-order", { order });
   } catch (error) {
     res.status(500).render("admin/server-error", {
@@ -381,34 +391,34 @@ const handleApproveItemReplace = async (req, res) => {
   const { orderId, itemId } = req.params;
 
   try {
-    const order = await Order.findById(orderId).populate('items.product');
+    const order = await Order.findById(orderId).populate("items.product");
     if (!order) {
-      req.flash('err', 'Order not found');
-      return res.redirect('/admin/manage-orders');
+      req.flash("err", "Order not found");
+      return res.redirect("/admin/manage-orders");
     }
 
     const item = order.items.id(itemId);
     if (!item) {
-      req.flash('err', 'Item not found in order');
-      return res.redirect('/admin/manage-orders');
+      req.flash("err", "Item not found in order");
+      return res.redirect("/admin/manage-orders");
     }
 
-    if (item.replaceStatus !== 'requested') {
-      req.flash('err', 'Replacement request is not pending');
-      return res.redirect('/admin/manage-orders');
+    if (item.replaceStatus !== "requested") {
+      req.flash("err", "Replacement request is not pending");
+      return res.redirect("/admin/manage-orders");
     }
 
-    item.replaceStatus = 'approved';
+    item.replaceStatus = "approved";
     item.replaceApprovedAt = new Date();
 
     await order.save();
 
-    req.flash('suc', 'Replacement request approved successfully');
-    res.redirect('/admin/manage-orders');
+    req.flash("suc", "Replacement request approved successfully");
+    res.redirect("/admin/manage-orders");
   } catch (error) {
-    console.error('Error approving replacement:', error);
-    req.flash('err', 'Server error while approving replacement');
-    res.redirect('/admin/manage-orders');
+    console.error("Error approving replacement:", error);
+    req.flash("err", "Server error while approving replacement");
+    res.redirect("/admin/manage-orders");
   }
 };
 
@@ -416,34 +426,34 @@ const handleRejectItemReplace = async (req, res) => {
   const { orderId, itemId } = req.params;
 
   try {
-    const order = await Order.findById(orderId).populate('items.product');
+    const order = await Order.findById(orderId).populate("items.product");
     if (!order) {
-      req.flash('err', 'Order not found');
-      return res.redirect('/admin/manage-orders');
+      req.flash("err", "Order not found");
+      return res.redirect("/admin/manage-orders");
     }
 
     const item = order.items.id(itemId);
     if (!item) {
-      req.flash('err', 'Item not found in order');
-      return res.redirect('/admin/manage-orders');
+      req.flash("err", "Item not found in order");
+      return res.redirect("/admin/manage-orders");
     }
 
-    if (item.replaceStatus !== 'requested') {
-      req.flash('err', 'Replacement request is not pending');
-      return res.redirect('/admin/manage-orders');
+    if (item.replaceStatus !== "requested") {
+      req.flash("err", "Replacement request is not pending");
+      return res.redirect("/admin/manage-orders");
     }
 
-    item.replaceStatus = 'rejected';
+    item.replaceStatus = "rejected";
     item.replaceRejectedAt = new Date();
 
     await order.save();
 
-    req.flash('suc', 'Replacement request rejected successfully');
-    res.redirect('/admin/manage-orders');
+    req.flash("suc", "Replacement request rejected successfully");
+    res.redirect("/admin/manage-orders");
   } catch (error) {
-    console.error('Error rejecting replacement:', error);
-    req.flash('err', 'Server error while rejecting replacement');
-    res.redirect('/admin/manage-orders');
+    console.error("Error rejecting replacement:", error);
+    req.flash("err", "Server error while rejecting replacement");
+    res.redirect("/admin/manage-orders");
   }
 };
 
@@ -451,24 +461,24 @@ async function handleConfirmReplace(req, res) {
   const { orderId, itemId } = req.params;
 
   try {
-    const order = await Order.findById(orderId).populate('items.product');
+    const order = await Order.findById(orderId).populate("items.product");
     if (!order || !Array.isArray(order.items)) {
-      console.log('err', 'Order or items not found');
-      return res.redirect('/admin/manage-orders');
+      console.log("err", "Order or items not found");
+      return res.redirect("/admin/manage-orders");
     }
 
     const item = order.items.id(itemId);
     if (!item) {
-      console.log('err', 'Item not found in the order');
-      return res.redirect('/admin/manage-orders');
+      console.log("err", "Item not found in the order");
+      return res.redirect("/admin/manage-orders");
     }
 
     if (order.status !== "delivered") {
-      console.log('err', 'Replacement can only be confirmed after delivery');
-      return res.redirect('/admin/manage-orders');
+      console.log("err", "Replacement can only be confirmed after delivery");
+      return res.redirect("/admin/manage-orders");
     }
 
-    item.replaceStatus = 'replaced';
+    item.replaceStatus = "replaced";
     item.replacedAt = new Date();
 
     if (!item.replaceApprovedAt) {
@@ -477,16 +487,13 @@ async function handleConfirmReplace(req, res) {
 
     await order.save();
 
-    console.log('suc', 'Replacement request approved successfully');
-    res.redirect('/admin/manage-orders');
-
+    console.log("suc", "Replacement request approved successfully");
+    res.redirect("/admin/manage-orders");
   } catch (error) {
-    console.error('Error confirming replacement:', error);
+    console.error("Error confirming replacement:", error);
     res.status(500).render("server-error", { message: error.message });
   }
 }
-
-
 
 async function handleGetAllCoupons(req, res) {
   try {
@@ -494,7 +501,7 @@ async function handleGetAllCoupons(req, res) {
     res.status(200).render("admin/manage-coupons", {
       coupons,
       error: null,
-      message: null 
+      message: null,
     });
   } catch (err) {
     res.status(500).render("server-error", { message: err.message });
@@ -535,7 +542,9 @@ async function handleSearchCoupons(req, res) {
       code: { $regex: search, $options: "i" },
     });
 
-    res.status(200).render("admin/manage-coupons", { coupons, error:null, message:null });
+    res
+      .status(200)
+      .render("admin/manage-coupons", { coupons, error: null, message: null });
   } catch (err) {
     res.status(500).render("server-error", { message: err.message });
   }
@@ -554,7 +563,9 @@ async function handleToggleCouponStatus(req, res) {
   try {
     const coupon = await Coupon.findById(req.params.id);
     if (!coupon) {
-      return res.status(404).render("server-error", { message: "Coupon not found" });
+      return res
+        .status(404)
+        .render("server-error", { message: "Coupon not found" });
     }
 
     coupon.isActive = !coupon.isActive;
@@ -586,7 +597,7 @@ async function handleGetSearchMessages(req, res) {
 }
 
 async function handleGetMessages(req, res) {
-  const messages = await Message.find({}).sort({createdAt:1});
+  const messages = await Message.find({}).sort({ createdAt: 1 });
   res.status(200).render("admin/user-messages", {
     messages,
     reply: req.query.reply,
@@ -604,13 +615,12 @@ async function handleDeleteMessages(req, res) {
   }
 }
 
-
 async function handleReplyToUser(req, res) {
   try {
     const { email, message } = req.body;
 
     if (!email || !message) {
-      return res.status(400).send({error: "Email and message are required."});
+      return res.status(400).send({ error: "Email and message are required." });
     }
 
     await sendMessage(email, message);
@@ -645,7 +655,6 @@ async function handlePostAddBanner(req, res) {
     const banner = await Banner.findOne();
 
     if (banner) {
-
       banner.heading = heading;
       banner.description = description;
 
@@ -665,7 +674,7 @@ async function handlePostAddBanner(req, res) {
 
     res.status(201).render("admin/add-banner", {
       message: "Banner saved successfully",
-      banner
+      banner,
     });
   } catch (error) {
     res.status(500).render("server-error", {
@@ -674,14 +683,14 @@ async function handlePostAddBanner(req, res) {
   }
 }
 
-async function handleAdminLogout(req,res) {
+async function handleAdminLogout(req, res) {
   try {
-    res.clearCookie('adminToken');
-    req.flash('success', 'Admin logout successful');
-    res.redirect('/');
+    res.clearCookie("adminToken");
+    req.flash("success", "Admin logout successful");
+    res.redirect("/");
   } catch (error) {
-    req.flash('error', 'Server error: ' + error.message);
-    res.redirect('/');
+    req.flash("error", "Server error: " + error.message);
+    res.redirect("/");
   }
 }
 
@@ -702,7 +711,7 @@ module.exports = {
   handleViewUserOrderDetails,
   handleApproveItemReplace,
   handleRejectItemReplace,
-  handleConfirmReplace, 
+  handleConfirmReplace,
   handleDeleteOrder,
 
   handlePostAddProducts,
