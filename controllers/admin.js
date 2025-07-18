@@ -248,11 +248,9 @@ async function handlePostAddProducts(req, res) {
     });
   } catch (error) {
     console.error("Error adding product:", error);
-    res.status(500).render("admin/server-error", {
-      message: error.message,
-    });
+    res.status(500).send("server-error: ",error)
+    };
   }
-}
 
 async function handleEditProduct(req, res) {
   const productId = req.params.id;
@@ -319,7 +317,7 @@ async function handleDeleteProducts(req, res) {
       message: error.message,
     });
   }
-}
+} 
 
 async function handleGetManageOrders(req, res) {
   const orders = await Order.find({})
@@ -641,18 +639,17 @@ async function handleGetAddBanner(req, res) {
       banner,
     });
   } catch (error) {
-    res.status(500).render("server-error", {
-      message: error.message,
-    });
+    res.status(500).send("server-error", 
+       error.message,
+    );
   }
 }
-
 async function handlePostAddBanner(req, res) {
   try {
     const { heading, description } = req.body;
-    const bannerImage = req.file.path;
+    const bannerImage = req.file?.path;
 
-    const banner = await Banner.findOne();
+    let banner = await Banner.findOne();
 
     if (banner) {
       banner.heading = heading;
@@ -677,11 +674,11 @@ async function handlePostAddBanner(req, res) {
       banner,
     });
   } catch (error) {
-    res.status(500).render("server-error", {
-      message: error.message,
-    });
+    console.error(error);
+    res.status(500).send({ error: "Server error" });
   }
 }
+
 
 async function handleAdminLogout(req, res) {
   try {

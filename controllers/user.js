@@ -100,22 +100,32 @@ async function handlePostLogin(req, res) {
 
   try {
     const user = await User.findOne({ email });
+
     if (!user) {
-      console.log("Incorrect email")
       req.flash("error", "User not found");
+      return res.redirect("/login");
+    }
+
+    if (user.isBlocked) {
+      req.flash("error", "Your account is blocked.");
+      return res.redirect("/login");
+    }
+
+    if (!user.isVerified) {
+      req.flash("error", "Please verify your email first.");
       return res.redirect("/login");
     }
 
     const isPasswordMatch = await compareTheValue(password, user.password);
     if (!isPasswordMatch) {
-      console.log("Incorrect password")
       req.flash("error", "Incorrect password");
-
       return res.redirect("/login");
     }
 
     const payload = { user: { id: user.id } };
-    const token = jwt.sign(payload, secret, { expiresIn: "7d" });
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -127,7 +137,7 @@ async function handlePostLogin(req, res) {
     req.flash("success", `Login successful, welcome ${user.name}`);
     return res.redirect("/");
   } catch (error) {
-    req.flash("error", error.message);
+    req.flash("error", "Something went wrong");
     return res.redirect("/login");
   }
 }
